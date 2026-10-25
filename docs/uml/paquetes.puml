@@ -1,0 +1,50 @@
+@startuml paquetes
+!theme plain
+skinparam defaultFontName Arial
+skinparam packageStyle folder
+skinparam package {
+  BorderColor #1C2130
+}
+title Diagrama de paquetes — Autos Colombia (carpeta src/)
+
+package "Presentación" #FFFDF2 {
+  package app
+  package components {
+    package ui
+  }
+}
+
+package "Lógica de negocio" #F4F6FA {
+  package acciones
+  package servicios
+}
+
+package "Acceso a datos" #F4F6FA {
+  package repositorios
+}
+
+package modelos
+package lib
+
+app ..> components
+app ..> repositorios : consulta
+components ..> acciones : invoca
+acciones ..> servicios
+servicios ..> repositorios
+servicios ..> modelos
+repositorios ..> modelos
+components ..> modelos
+app ..> lib
+
+legend right
+  |= Paquete |= Contenido |
+  | app | Páginas: Panel, Entrada, Salida, Historial |
+  | components | Componentes de pantalla (formularios, tablas, plano) |
+  | ui | Componentes shadcn/ui |
+  | acciones | Server Actions (controladores) |
+  | servicios | ParqueaderoServicio: reglas de negocio |
+  | repositorios | Consultas SQL a PostgreSQL |
+  | modelos | Entidades y reglas del dominio |
+  | lib | Utilidades (formato de fechas) |
+endlegend
+@enduml

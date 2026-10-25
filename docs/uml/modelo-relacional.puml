@@ -1,0 +1,40 @@
+@startuml modelo-relacional
+!theme plain
+skinparam defaultFontName Arial
+skinparam linetype ortho
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1C2130
+  HeaderBackgroundColor #FFF6CC
+}
+hide circle
+hide methods
+title Modelo Relacional (MR)
+
+entity "VEHICULO" as vehiculo {
+  <u>id</u> (PK)
+  --
+  placa (único)
+  tipo
+  creado_en
+}
+
+entity "CELDA" as celda {
+  <u>id</u> (PK)
+  --
+  codigo (único)
+  tipo
+}
+
+entity "REGISTRO" as registro {
+  <u>id</u> (PK)
+  --
+  //vehiculo_id// (FK → VEHICULO.id)
+  //celda_id// (FK → CELDA.id)
+  fecha_entrada
+  fecha_salida
+}
+
+vehiculo ||--o{ registro : realiza
+celda ||--o{ registro : ocupa
+@enduml

@@ -1,0 +1,38 @@
+@startuml casos-de-uso
+!theme plain
+skinparam defaultFontName Arial
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #FFF6CC
+  BorderColor #1C2130
+}
+left to right direction
+title Casos de uso — Gestión de entrada y salida de vehículos (Iteración 1)
+
+actor "Operador del\nparqueadero" as operador
+
+rectangle "Sistema Autos Colombia" {
+  usecase "CU-01\nRegistrar entrada\nde vehículo" as CU01
+  usecase "CU-02\nRegistrar salida\nde vehículo" as CU02
+  usecase "CU-03\nConsultar vehículos\ndentro" as CU03
+  usecase "CU-04\nConsultar disponibilidad\nde celdas" as CU04
+  usecase "CU-05\nConsultar historial" as CU05
+
+  usecase "Validar placa" as VAL
+  usecase "Elegir celda libre" as CEL
+  usecase "Registrar vehículo nuevo" as NUE
+  usecase "Buscar vehículo\npor placa" as BUS
+}
+
+operador --> CU01
+operador --> CU02
+operador --> CU03
+operador --> CU04
+operador --> CU05
+
+CU01 ..> VAL : <<include>>
+CU01 ..> CEL : <<include>>
+CU01 -[hidden]-> NUE
+NUE .[norank].> CU01 : <<extend>>\n(placa no registrada)
+CU02 ..> BUS : <<include>>
+@enduml

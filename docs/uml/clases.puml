@@ -1,0 +1,86 @@
+@startuml clases
+!theme plain
+skinparam defaultFontName Arial
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1C2130
+  HeaderBackgroundColor #FFF6CC
+}
+hide empty members
+title Diagrama de clases — Autos Colombia (Iteración 1)
+
+package "modelos" {
+  enum TipoVehiculo <<enumeration>> {
+    CARRO
+    MOTO
+  }
+
+  class Vehiculo {
+    - id : int
+    - placa : String
+    - tipo : TipoVehiculo
+    - creadoEn : Date
+    + {static} normalizarPlaca(placa : String) : String
+    + {static} tipoSegunPlaca(placa : String) : TipoVehiculo
+  }
+
+  class Celda {
+    - id : int
+    - codigo : String
+    - tipo : TipoVehiculo
+  }
+
+  class Registro {
+    - id : int
+    - fechaEntrada : Date
+    - fechaSalida : Date [0..1]
+    + permanencia(ahora : Date) : int
+  }
+
+  class ErrorNegocio {
+    - mensaje : String
+    - campo : String
+  }
+}
+
+package "servicios" {
+  class ParqueaderoServicio <<service>> {
+    + registrarEntrada(placa : String, celdaId : int) : int
+    + registrarSalida(placa : String) : int
+  }
+}
+
+package "repositorios" {
+  class VehiculoRepositorio <<repository>> {
+    + obtenerOCrearVehiculo(placa : String, tipo : TipoVehiculo) : Vehiculo
+  }
+  class CeldaRepositorio <<repository>> {
+    + listarEstadoCeldas() : Celda[]
+    + buscarCeldaPorId(id : int) : Celda
+    + celdaEstaOcupada(celdaId : int) : boolean
+  }
+  class RegistroRepositorio <<repository>> {
+    + listarVehiculosDentro() : Registro[]
+    + listarHistorial(placa : String, limite : int) : Registro[]
+    + buscarRegistroPorId(id : int) : Registro
+    + buscarRegistroDentro(placa : String) : Registro
+    + crearRegistro(vehiculoId : int, celdaId : int) : Registro
+    + cerrarRegistroDentro(placa : String) : int
+  }
+}
+
+Vehiculo "1" -- "0..*" Registro : realiza >
+Celda "1" -- "0..*" Registro : se asigna en >
+Vehiculo --> TipoVehiculo
+Celda --> TipoVehiculo
+
+ParqueaderoServicio ..> VehiculoRepositorio
+ParqueaderoServicio ..> CeldaRepositorio
+ParqueaderoServicio ..> RegistroRepositorio
+ParqueaderoServicio ..> ErrorNegocio : <<lanza>>
+
+VehiculoRepositorio ..> Vehiculo
+CeldaRepositorio ..> Celda
+RegistroRepositorio ..> Registro
+@enduml

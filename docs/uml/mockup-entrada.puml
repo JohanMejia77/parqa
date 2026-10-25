@@ -1,0 +1,38 @@
+@startsalt mockup-entrada
+title Mockup HU-01 · Registrar entrada de vehículo
+{+
+  {/ <b>Autos Colombia</b> | Panel | <b>Entrada</b> | Salida | Historial }
+  .
+  <size:16><b>Registrar entrada</b></size>
+  Escribe la placa, confirma la celda y registra la hora de entrada.
+  .
+  {
+    {+
+      <b>Datos del vehículo</b>
+      Si la placa es nueva, el vehículo queda registrado al entrar.
+      .
+      Placa
+      "    ABC123    "
+      <&check> Carro detectado por el formato de la placa
+      .
+      Celda
+      ^ A-05 (primera libre)   ^
+      16 libres para carros. También puedes elegirla en el plano.
+      .
+      [ <&arrow-thick-right> Registrar entrada ]
+    } | . | {+
+      <b>Plano de celdas</b>
+      Celda elegida: A-05
+      .
+      Carros: 16 libres de 20
+      {#
+        <b>A-01</b> | A-02 | A-03 | <b>A-04</b> | <b>[A-05]</b>
+        A-06 | <b>A-07</b> | A-08 | A-09 | A-10
+        A-11 | A-12 | A-13 | A-14 | A-15
+        A-16 | A-17 | A-18 | A-19 | A-20
+      }
+      <b>negrita</b> = ocupada · [ ] = elegida
+    }
+  }
+}
+@endsalt

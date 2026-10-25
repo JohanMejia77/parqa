@@ -1,0 +1,45 @@
+@startuml arquitectura
+!theme plain
+skinparam defaultFontName Arial
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #1C2130
+}
+skinparam node {
+  BackgroundColor #F4F6FA
+  BorderColor #1C2130
+}
+skinparam database {
+  BackgroundColor #FFF6CC
+  BorderColor #1C2130
+}
+title Arquitectura del sistema — Autos Colombia (cliente-servidor en capas)
+
+node "Equipo del operador" {
+  component "Navegador web" as navegador
+}
+
+node "Servidor de aplicación\nNext.js 16 sobre Node.js" {
+  package "Capa de presentación" {
+    component "Páginas\n(React Server Components)" as paginas
+    component "Componentes cliente\n(formularios con shadcn/ui)" as cliente
+  }
+  package "Capa de lógica de negocio" {
+    component "Server Actions\n(controladores)" as acciones
+    component "ParqueaderoServicio" as servicio
+  }
+  package "Capa de acceso a datos" {
+    component "Repositorios\n(SQL con el driver pg)" as repositorios
+  }
+}
+
+database "PostgreSQL\nbase autos_colombia\n(vehiculo, celda, registro)" as bd
+
+navegador --> paginas : HTTP\n(HTML)
+navegador --> cliente : interacción
+cliente --> acciones : envía formulario\n(HTTP POST)
+paginas --> repositorios : consultas
+acciones --> servicio : registrar entrada / salida
+servicio --> repositorios : transacciones
+repositorios --> bd : SQL\n(TCP 5432)
+@enduml

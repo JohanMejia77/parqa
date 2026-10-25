@@ -1,0 +1,33 @@
+@startsalt mockup-salida
+title Mockup HU-02 · Registrar salida de vehículo
+{+
+  {/ <b>Autos Colombia</b> | Panel | Entrada | <b>Salida</b> | Historial }
+  .
+  <size:16><b>Registrar salida</b></size>
+  Busca el vehículo por su placa o elígelo de la lista, y confirma la salida.
+  .
+  {
+    {+
+      <b>Buscar vehículo</b>
+      Placa
+      { "   KJT482   " | [ <&magnifying-glass> Buscar ] }
+      --
+      <size:14><b>KJT 482</b></size>
+      { Tipo: <b>Carro</b> | Celda: <b>A-01</b> }
+      { Entrada: <b>6:31 p. m.</b> | Tiempo dentro: <b>3 h 32 min</b> }
+      La hora de salida se toma del servidor al confirmar.
+      .
+      [ <&arrow-thick-left> Confirmar salida ]
+    } | . | {+
+      <b>Vehículos dentro</b>
+      {#
+        <b>Placa</b> | <b>Tipo</b> | <b>Celda</b> | <b>Entrada</b> | <b>Tiempo</b> | .
+        KJT 482 | Carro | A-01 | 6:31 p. m. | 3 h 32 min | [Elegir]
+        HQX 915 | Carro | A-04 | 8:46 p. m. | 1 h 17 min | [Elegir]
+        RTP 37F | Moto | M-02 | 9:06 p. m. | 57 min | [Elegir]
+        FNC 208 | Carro | A-07 | 9:26 p. m. | 37 min | [Elegir]
+      }
+    }
+  }
+}
+@endsalt

@@ -1,0 +1,25 @@
+@startsalt mockup-historial
+title Mockup HU-05 · Consultar historial de entradas y salidas
+{+
+  {/ <b>Autos Colombia</b> | Panel | Entrada | Salida | <b>Historial</b> }
+  .
+  <size:16><b>Historial</b></size>
+  Entradas y salidas registradas, de la más reciente a la más antigua.
+  .
+  {+
+    <b>Movimientos</b>
+    Últimos 7 movimientos.
+    Filtrar por placa
+    { "Ej. ABC123…   " | [ <&magnifying-glass> Filtrar ] }
+    --
+    {#
+      <b>Placa</b> | <b>Tipo</b> | <b>Celda</b> | <b>Entrada</b> | <b>Salida</b> | <b>Permanencia</b> | <b>Estado</b>
+      FNC 208 | Carro | A-07 | 22 oct, 9:26 p. m. | — | 32 min | <b>Dentro</b>
+      RTP 37F | Moto | M-02 | 22 oct, 9:06 p. m. | — | 52 min | <b>Dentro</b>
+      BOG 771 | Carro | A-05 | 22 oct, 4:51 p. m. | 22 oct, 7:41 p. m. | 2 h 50 min | Finalizado
+      MDE 19K | Moto | M-01 | 22 oct, 3:51 p. m. | 22 oct, 5:21 p. m. | 1 h 30 min | Finalizado
+      BOG 771 | Carro | A-02 | 21 oct, 7:51 p. m. | 21 oct, 9:51 p. m. | 2 h 0 min | Finalizado
+    }
+  }
+}
+@endsalt

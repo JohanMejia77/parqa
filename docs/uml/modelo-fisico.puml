@@ -1,0 +1,50 @@
+@startuml modelo-fisico
+!theme plain
+skinparam defaultFontName Arial
+skinparam linetype ortho
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1C2130
+  HeaderBackgroundColor #FFF6CC
+}
+hide circle
+hide methods
+title Modelo físico — PostgreSQL (db/schema.sql)
+
+entity "vehiculo" as vehiculo {
+  id : SERIAL <<PK>>
+  --
+  placa : VARCHAR(6) NOT NULL <<UNIQUE>>
+  tipo : VARCHAR(5) NOT NULL <<CHECK: CARRO | MOTO>>
+  creado_en : TIMESTAMPTZ NOT NULL DEFAULT now()
+}
+
+entity "celda" as celda {
+  id : SERIAL <<PK>>
+  --
+  codigo : VARCHAR(5) NOT NULL <<UNIQUE>>
+  tipo : VARCHAR(5) NOT NULL <<CHECK: CARRO | MOTO>>
+}
+
+entity "registro" as registro {
+  id : SERIAL <<PK>>
+  --
+  vehiculo_id : INTEGER NOT NULL <<FK>>
+  celda_id : INTEGER NOT NULL <<FK>>
+  fecha_entrada : TIMESTAMPTZ NOT NULL DEFAULT now()
+  fecha_salida : TIMESTAMPTZ NULL
+  ..
+  CHECK (fecha_salida >= fecha_entrada)
+  UNIQUE (vehiculo_id) WHERE fecha_salida IS NULL
+  UNIQUE (celda_id) WHERE fecha_salida IS NULL
+  INDEX (fecha_entrada DESC)
+}
+
+vehiculo ||--o{ registro : "fk_registro_vehiculo\nON DELETE RESTRICT"
+celda ||--o{ registro : "fk_registro_celda\nON DELETE RESTRICT"
+
+legend right
+  PK = llave primaria · FK = llave foránea
+  UNIQUE ... WHERE = índice único parcial
+endlegend
+@enduml

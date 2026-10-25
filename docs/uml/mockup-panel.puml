@@ -1,0 +1,40 @@
+@startsalt mockup-panel
+title Mockup HU-03 y HU-04 · Panel (vehículos dentro y disponibilidad de celdas)
+{+
+  {/ <b>Autos Colombia</b> | <b>Panel</b> | Entrada | Salida | Historial }
+  .
+  { <size:16><b>Panel</b></size> | . | . | [ <&arrow-thick-right> Registrar entrada ] | [ <&arrow-thick-left> Registrar salida ] }
+  Ocupación del parqueadero, jueves, 22 de octubre
+  .
+  {
+    {+
+      <b>Celdas</b>
+      Disponibilidad en este momento.
+      .
+      Carros: <b>16</b> libres de 20
+      {#
+        <b>A-01</b> | A-02 | A-03 | <b>A-04</b> | A-05
+        A-06 | <b>A-07</b> | A-08 | A-09 | A-10
+        A-11 | A-12 | A-13 | A-14 | A-15
+        A-16 | A-17 | A-18 | A-19 | A-20
+      }
+      Motos: <b>9</b> libres de 10
+      {#
+        M-01 | <b>M-02</b> | M-03 | M-04 | M-05
+        M-06 | M-07 | M-08 | M-09 | M-10
+      }
+      <b>negrita</b> = ocupada
+    } | . | {+
+      <b>Vehículos dentro</b>
+      4 vehículos, del que lleva más tiempo al más reciente.
+      {#
+        <b>Placa</b> | <b>Tipo</b> | <b>Celda</b> | <b>Entrada</b> | <b>Tiempo</b> | .
+        KJT 482 | Carro | A-01 | 6:31 p. m. | 3 h 27 min | [Salida]
+        HQX 915 | Carro | A-04 | 8:46 p. m. | 1 h 12 min | [Salida]
+        RTP 37F | Moto | M-02 | 9:06 p. m. | 52 min | [Salida]
+        FNC 208 | Carro | A-07 | 9:26 p. m. | 32 min | [Salida]
+      }
+    }
+  }
+}
+@endsalt

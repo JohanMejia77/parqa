@@ -1,0 +1,35 @@
+@startchen mer
+!theme plain
+skinparam defaultFontName Arial
+title Modelo Entidad-Relación (MER) — notación de Chen
+
+entity VEHICULO {
+  id <<key>>
+  placa
+  tipo
+  creado_en
+}
+
+entity CELDA {
+  id <<key>>
+  codigo
+  tipo
+}
+
+entity REGISTRO {
+  id <<key>>
+  fecha_entrada
+  fecha_salida
+}
+
+relationship REALIZA {
+}
+
+relationship OCUPA {
+}
+
+VEHICULO -1- REALIZA
+REALIZA -N- REGISTRO
+CELDA -1- OCUPA
+OCUPA -N- REGISTRO
+@endchen
