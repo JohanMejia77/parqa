@@ -1,0 +1,61 @@
+@startuml sd09-registrar-entrada
+!theme plain
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #1C2130
+  LifeLineBorderColor #1C2130
+}
+title SD09 · Registrar entrada de vehículo (HU-01, iteración 1)
+
+actor "Operador" as U
+boundary "Página /entrada\n(FormularioEntrada)" as P
+control "registrarEntradaAccion\n(Server Action)" as A
+control "ParqueaderoServicio" as S
+control "AutenticacionServicio" as AU
+participant "RegistroRepositorio" as RR
+participant "CeldaRepositorio" as RC
+participant "VehiculoRepositorio" as RV
+database "PostgreSQL" as BD
+
+U -> P : escribe la placa y confirma la celda
+P -> A : enviar formulario (placa, celda)
+A -> AU : obtenerUsuarioActual()
+AU --> A : actor
+A -> S : registrarEntrada(actor, placa, celdaId)
+S -> AU : autorizar(actor, OPERADOR)
+ref over S, AU : SD02 Verificar la sesión y el rol
+S -> S : normaliza la placa y deduce el tipo\n(ABC123 carro, ABC12D moto)
+
+alt placa inválida o sin celda
+  S --> A : ErrorNegocio (inválido, campo)
+  A --> P : error bajo el campo
+else datos válidos
+  S -> BD : BEGIN
+  S -> RR : buscarRegistroDentro(placa)
+  S -> RC : bloquearCelda(celdaId, FOR SHARE)
+  S -> RV : obtenerOCrearVehiculo(placa, tipo)
+  RV -> BD : INSERT INTO vehiculo ... ON CONFLICT (placa)
+  S -> RC : celdaEstaOcupada(celdaId)
+
+  alt el vehículo ya está dentro, la celda no existe,\nes de otro tipo o está ocupada
+    S -> BD : ROLLBACK
+    S --> A : ErrorNegocio (conflicto, campo)
+    A --> P : motivo y datos actualizados
+  else todo en orden
+    S -> RR : crearRegistro(vehiculoId, celdaId)
+    RR -> BD : INSERT INTO registro (fecha_entrada = now())
+    S -> BD : COMMIT
+    S --> A : id del registro
+    A --> P : redirige a /entrada?registro=id
+    P --> U : "Entrada registrada": placa, celda y hora
+  end
+end
+
+note over RR, BD
+  Dos índices únicos parciales impiden, aun con dos operadores
+  a la vez, dos entradas abiertas del mismo vehículo
+  o dos vehículos en la misma celda.
+end note
+@enduml

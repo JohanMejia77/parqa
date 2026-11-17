@@ -1,0 +1,29 @@
+CE-10 · Eliminar celda sin referencias (SD07)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:07:46 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+UI> diálogo de confirmación: {"titulo":"¿Eliminar la celda T-ELIM-01?","foco":"Cancelar"}
+   [OK]    la interfaz pide confirmación y el foco empieza en Cancelar
+UI> captura: CE-10-confirmacion.png
+UI> aviso: "Celda eliminada La celda T-ELIM-01 se eliminó del catálogo."
+   [OK]    eliminación confirmada en la interfaz
+UI> catálogo después de recargar: "Celdas Catálogo de los espacios del parqueadero. Nueva celda Catálogo 0 celdas coinciden con la búsqueda. Buscar por código Tipo Todas Carros Motos Buscar Quitar filtros Ninguna celda coincide Revisa el código o el tipo que elegiste, o quita los filtros para v"
+   [OK]    ya no aparece en el catálogo
+UI> captura: CE-10-celda-eliminada.png
+>> GET /api/celdas/34   (sesión de admin_prueba)
+<< 404
+   {"error":"La celda no existe. Puede que otra persona la haya eliminado."}
+   [OK]    la consulta por identificador responde 404
+>> POST /api/celdas   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-ELIM-02","tipo":"MOTO"}
+<< 201
+   {"id":39,"codigo":"T-ELIM-02","tipo":"MOTO"}
+>> DELETE /api/celdas/39   (sesión de admin_prueba)
+<< 204
+>> GET /api/celdas/39   (sesión de admin_prueba)
+<< 404
+   {"error":"La celda no existe. Puede que otra persona la haya eliminado."}
+   [OK]    por API la eliminación de una celda sin uso se confirma con 204 y después responde 404
+
+Resultado: APROBADO (5 de 5 comprobaciones)

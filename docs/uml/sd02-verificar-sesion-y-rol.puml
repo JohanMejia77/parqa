@@ -1,0 +1,55 @@
+@startuml sd02-verificar-sesion-y-rol
+!theme plain
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBackgroundColor #FFF6CC
+  ParticipantBorderColor #1C2130
+  LifeLineBorderColor #1C2130
+}
+title SD02 · Verificar la sesión y el rol en una operación protegida (HU-08)
+
+actor "Usuario o\ncliente HTTP" as U
+participant "Proxy\n(proxy.ts)" as X
+control "Controlador\n(página, Server Action\no API REST)" as C
+control "AutenticacionServicio" as S
+participant "SesionRepositorio" as RS
+database "PostgreSQL" as BD
+control "Servicio de la operación\n(usuarios, celdas, parqueadero)" as O
+
+U -> X : petición (con o sin cookie ac_sesion)
+
+alt pide una página y no trae la cookie
+  X --> U : redirige a /login
+else trae la cookie, o es una petición a la API
+  X -> C : continúa
+  C -> S : obtenerUsuarioActual()
+  S -> RS : buscarUsuarioDeSesion(SHA-256(token))
+  RS -> BD : SELECT ... FROM sesion JOIN usuario\nWHERE token_hash = $1 AND expira_en > now()
+  BD --> RS : usuario, o nada
+  RS --> S
+  S --> C : usuario o null
+
+  alt no hay sesión, se cerró o ya expiró
+    C --> U : página: redirige a /login\nAPI: 401 "Inicia sesión para continuar."
+  else sesión válida
+    C -> O : operación(actor, datos)
+    O -> S : autorizar(actor, rol requerido)
+    alt el rol del usuario no es el requerido
+      S --> O : ErrorNegocio (sin permiso)
+      O --> C
+      C --> U : página: "Tu cuenta no tiene permiso para esta página"\nAPI: 403
+    else rol correcto
+      O -> O : valida los datos y ejecuta la operación
+      O --> C : resultado
+      C --> U : respuesta
+    end
+  end
+end
+
+note over O
+  Administrador: usuarios y celdas.
+  Operador: entradas, salidas y consultas.
+  Ningún rol hereda las operaciones del otro.
+end note
+@enduml

@@ -1,0 +1,61 @@
+00-preparacion · Preparación del conjunto de prueba
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:05:44 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {"nombreUsuario":"admin_prueba","contrasena":"<oculta>"}
+<< 200   Set-Cookie: ac_sesion=<oculto>; Path=/; Expires=Thu, 12 Nov 2026 11:05:43 GMT; HttpOnly; SameSite=lax
+   {"id":1,"nombreUsuario":"admin_prueba","nombre":"Administrador principal","rol":"ADMINISTRADOR","creadoEn":"2026-11-12T03:05:40.050Z"}
+   [OK]    admin_prueba (rol ADMINISTRADOR) existe y puede iniciar sesión
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"Operador de Prueba","nombreUsuario":"operador_prueba","contrasena":"<oculta>","rol":"OPERADOR"}
+<< 201
+   {"id":2,"nombreUsuario":"operador_prueba","nombre":"Operador de Prueba","rol":"OPERADOR","creadoEn":"2026-11-12T03:05:44.033Z"}
+   [OK]    operador_prueba creado con rol OPERADOR
+>> POST /api/celdas   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-LIBRE-01","tipo":"CARRO"}
+<< 201
+   {"id":31,"codigo":"T-LIBRE-01","tipo":"CARRO"}
+   [OK]    celda T-LIBRE-01 creada
+>> POST /api/celdas   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-HIST-01","tipo":"CARRO"}
+<< 201
+   {"id":32,"codigo":"T-HIST-01","tipo":"CARRO"}
+   [OK]    celda T-HIST-01 creada
+>> POST /api/celdas   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-OCUP-01","tipo":"CARRO"}
+<< 201
+   {"id":33,"codigo":"T-OCUP-01","tipo":"CARRO"}
+   [OK]    celda T-OCUP-01 creada
+>> POST /api/celdas   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-ELIM-01","tipo":"MOTO"}
+<< 201
+   {"id":34,"codigo":"T-ELIM-01","tipo":"MOTO"}
+   [OK]    celda T-ELIM-01 creada
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {"nombreUsuario":"operador_prueba","contrasena":"<oculta>"}
+<< 200   Set-Cookie: ac_sesion=<oculto>; Path=/; Expires=Thu, 12 Nov 2026 11:05:44 GMT; HttpOnly; SameSite=lax
+   {"id":2,"nombreUsuario":"operador_prueba","nombre":"Operador de Prueba","rol":"OPERADOR","creadoEn":"2026-11-12T03:05:44.033Z"}
+   [OK]    operador_prueba puede iniciar sesión
+>> POST /api/entradas   (sesión de operador_prueba)
+   cuerpo: {"placa":"TST001","celdaId":32}
+<< 201
+   {"id":8,"vehiculoId":7,"celdaId":32,"fechaEntrada":"2026-11-12T03:05:44.629Z","fechaSalida":null,"placa":"TST001","tipo":"CARRO","codigoCelda":"T-HIST-01"}
+   [OK]    T-HIST-01: entrada de TST001
+>> POST /api/salidas   (sesión de operador_prueba)
+   cuerpo: {"placa":"TST001"}
+<< 200
+   {"id":8,"vehiculoId":7,"celdaId":32,"fechaEntrada":"2026-11-12T03:05:44.629Z","fechaSalida":"2026-11-12T03:05:44.707Z","placa":"TST001","tipo":"CARRO","codigoCelda":"T-HIST-01"}
+   [OK]    T-HIST-01: salida de TST001 (queda libre y con historial)
+>> POST /api/entradas   (sesión de operador_prueba)
+   cuerpo: {"placa":"TST002","celdaId":33}
+<< 201
+   {"id":9,"vehiculoId":8,"celdaId":33,"fechaEntrada":"2026-11-12T03:05:44.731Z","fechaSalida":null,"placa":"TST002","tipo":"CARRO","codigoCelda":"T-OCUP-01"}
+   [OK]    T-OCUP-01: entrada de TST002 (queda ocupada)
+BD> Estado de las celdas de prueba
+    SELECT c.codigo, c.tipo, (SELECT count(*)::int FROM registro r WHERE r.celda_id = c.id) AS movimientos, EXISTS (SELECT 1 FROM registro r WHERE r.celda_id = c.id AND r.fecha_salida IS NULL) AS ocupada FROM celda c WHERE c.codigo LIKE 'T-%' ORDER BY c.codigo
+    => [{"codigo":"T-ELIM-01","tipo":"MOTO","movimientos":0,"ocupada":false},{"codigo":"T-HIST-01","tipo":"CARRO","movimientos":1,"ocupada":false},{"codigo":"T-LIBRE-01","tipo":"CARRO","movimientos":0,"ocupada":false},{"codigo":"T-OCUP-01","tipo":"CARRO","movimientos":1,"ocupada":true}]
+   [OK]    T-NUEVA-01 y T-CONC-01 no existen todavía
+
+Resultado: APROBADO (11 de 11 comprobaciones)

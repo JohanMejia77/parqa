@@ -1,0 +1,40 @@
+US-05 · Sesión vencida o revocada (SD02)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:10 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {"nombreUsuario":"admin_prueba","contrasena":"<oculta>"}
+<< 200   Set-Cookie: ac_sesion=<oculto>; Path=/; Expires=Thu, 12 Nov 2026 11:06:07 GMT; HttpOnly; SameSite=lax
+   {"id":1,"nombreUsuario":"admin_prueba","nombre":"Administrador principal","rol":"ADMINISTRADOR","creadoEn":"2026-11-12T03:05:40.050Z"}
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {"nombreUsuario":"admin_prueba","contrasena":"<oculta>"}
+<< 200   Set-Cookie: ac_sesion=<oculto>; Path=/; Expires=Thu, 12 Nov 2026 11:06:07 GMT; HttpOnly; SameSite=lax
+   {"id":1,"nombreUsuario":"admin_prueba","nombre":"Administrador principal","rol":"ADMINISTRADOR","creadoEn":"2026-11-12T03:05:40.050Z"}
+BD> se vence una sesión: UPDATE sesion SET expira_en = now() - interval '1 minute' WHERE token_hash = <hash de la sesión>  => 1 fila(s)
+BD> se revoca otra sesión: DELETE FROM sesion WHERE token_hash = <hash de la sesión>  => 1 fila(s)
+   [OK]    se prepararon una sesión vencida y una revocada
+>> GET /api/celdas   (sesión vencida)
+<< 401
+   {"error":"Inicia sesión para continuar."}
+   [OK]    sesión vencida: la consulta protegida responde 401
+>> POST /api/celdas   (sesión vencida)
+   cuerpo: {"codigo":"T-US05-1","tipo":"CARRO"}
+<< 401
+   {"error":"Inicia sesión para continuar."}
+   [OK]    sesión vencida: la operación protegida responde 401
+>> GET /api/celdas   (sesión revocada)
+<< 401
+   {"error":"Inicia sesión para continuar."}
+   [OK]    sesión revocada: la consulta protegida responde 401
+>> POST /api/celdas   (sesión revocada)
+   cuerpo: {"codigo":"T-US05-1","tipo":"CARRO"}
+<< 401
+   {"error":"Inicia sesión para continuar."}
+   [OK]    sesión revocada: la operación protegida responde 401
+   [OK]    no se consultó ni se cambió información: el catálogo sigue igual
+UI> página con la sesión vencida: "/login"
+   [OK]    la interfaz solicita autenticarse (vuelve a /login)
+UI> captura: US-05-sesion-vencida.png
+
+Resultado: APROBADO (7 de 7 comprobaciones)

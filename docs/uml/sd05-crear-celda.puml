@@ -1,0 +1,62 @@
+@startuml sd05-crear-celda
+!theme plain
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBackgroundColor #FFF6CC
+  ParticipantBorderColor #1C2130
+  LifeLineBorderColor #1C2130
+}
+title SD05 · Crear celda (HU-12)
+
+actor "Administrador" as U
+boundary "Página /celdas\n(diálogo Nueva celda)" as P
+control "crearCeldaAccion\n(Server Action)" as A
+control "CeldaServicio" as S
+control "AutenticacionServicio" as AU
+participant "CeldaRepositorio" as R
+database "PostgreSQL" as BD
+
+U -> P : pulsa "Nueva celda"
+P --> U : diálogo con el formulario
+U -> P : código y tipo de vehículo
+P -> A : enviar formulario
+A -> AU : obtenerUsuarioActual()
+AU --> A : actor
+A -> S : crearCelda(actor, { codigo, tipo })
+S -> AU : autorizar(actor, ADMINISTRADOR)
+ref over S, AU : SD02 Verificar la sesión y el rol
+
+S -> S : normaliza el código (mayúsculas, sin espacios a los lados)\ny valida código (hasta 10: letras, números, guiones)\ny tipo (CARRO o MOTO)
+
+alt falta un dato o no es válido
+  S --> A : ErrorNegocio (inválido, campo)
+  A --> P : error bajo el campo; el diálogo sigue abierto
+else datos válidos
+  S -> R : insertarCelda(codigo, tipo)
+  R -> BD : INSERT INTO celda
+  alt el código ya existe (restricción única)
+    BD --> R : error 23505 uq_celda_codigo
+    R --> S
+    S --> A : ErrorNegocio (conflicto)
+    A --> P : "Ya existe una celda con el código ..."
+  else celda creada
+    BD --> R : fila creada
+    R --> S : celda
+    S --> A : celda
+    A --> P : éxito + catálogo actualizado
+    P --> U : cierra el diálogo, aviso "Celda creada"\ny fila nueva resaltada (libre)
+  end
+end
+
+note over R, BD
+  Si dos administradores crean el mismo código
+  a la vez, la restricción única acepta solo uno:
+  el otro recibe el conflicto.
+end note
+
+note over A, S
+  API: POST /api/celdas responde 201,
+  409 código repetido y 422 datos inválidos.
+end note
+@enduml

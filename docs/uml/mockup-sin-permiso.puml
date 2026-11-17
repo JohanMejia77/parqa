@@ -1,0 +1,24 @@
+@startsalt mockup-sin-permiso
+title Mockup HU-07 y HU-08 · Menú según el rol, cerrar sesión y página sin permiso
+{+
+  {/ <b>Autos Colombia</b> | Panel | Entrada | Salida | Historial | . | Laura Gómez (Operador) | [ <&account-logout> Cerrar sesión ] }
+  El operador solo ve Panel, Entrada, Salida e Historial.
+  --
+  {/ <b>Autos Colombia</b> | Celdas | <b>Usuarios</b> | . | Administrador principal (Administrador) | [ <&account-logout> Cerrar sesión ] }
+  El administrador solo ve Celdas y Usuarios.
+  --
+  <size:16><b>Usuarios</b></size>
+  Cuentas con acceso al sistema y el rol de cada una.
+  .
+  {+
+    .
+    <&lock-locked> <b>Tu cuenta no tiene permiso para esta página</b>
+    Iniciaste sesión como operador: registras entradas y salidas.
+    Los usuarios y las celdas los gestiona un administrador.
+    .
+    [ Ir al Panel ]
+    .
+  }
+  Lo que ve un operador si abre la dirección /usuarios o /celdas.
+}
+@endsalt

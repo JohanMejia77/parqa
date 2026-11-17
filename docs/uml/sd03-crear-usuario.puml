@@ -1,0 +1,58 @@
+@startuml sd03-crear-usuario
+!theme plain
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBackgroundColor #FFF6CC
+  ParticipantBorderColor #1C2130
+  LifeLineBorderColor #1C2130
+}
+title SD03 · Crear usuario (HU-09)
+
+actor "Administrador" as U
+boundary "Página /usuarios\n(diálogo Crear usuario)" as P
+control "crearUsuarioAccion\n(Server Action)" as A
+control "UsuarioServicio" as S
+control "AutenticacionServicio" as AU
+participant "UsuarioRepositorio" as R
+database "PostgreSQL" as BD
+
+U -> P : pulsa "Crear usuario"
+P --> U : diálogo con el formulario
+U -> P : nombre, usuario, rol y contraseña
+P -> A : enviar formulario
+A -> AU : obtenerUsuarioActual()
+AU --> A : actor
+A -> S : crearUsuario(actor, datos)
+S -> AU : autorizar(actor, ADMINISTRADOR)
+ref over S, AU : SD02 Verificar la sesión y el rol
+
+S -> S : valida nombre (3 a 80), usuario (3 a 30, en minúsculas),\nrol (ADMINISTRADOR u OPERADOR) y contraseña (8 a 72)
+
+alt algún dato no es válido
+  S --> A : ErrorNegocio (inválido, campo)
+  A --> P : error bajo el campo; el diálogo sigue abierto
+else datos válidos
+  S -> S : generarHash(contrasena)\nscrypt con sal aleatoria
+  S -> R : insertarUsuario(nombreUsuario, nombre, rol, hash)
+  R -> BD : INSERT INTO usuario
+  alt el usuario ya existe (restricción única)
+    BD --> R : error 23505 uq_usuario_nombre_usuario
+    R --> S
+    S --> A : ErrorNegocio (conflicto)
+    A --> P : "Ya existe una cuenta con el usuario ..."
+  else cuenta creada
+    BD --> R : fila creada
+    R --> S : usuario (sin hash)
+    S --> A : usuario
+    A --> P : éxito + lista actualizada
+    P --> U : cierra el diálogo, aviso "Cuenta creada"\ny fila nueva resaltada
+  end
+end
+
+note over A, S
+  API: POST /api/usuarios responde 201,
+  401 sin sesión, 403 si no es administrador,
+  409 usuario repetido y 422 datos inválidos.
+end note
+@enduml

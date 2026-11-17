@@ -1,0 +1,47 @@
+@startuml casos-de-uso-celdas
+!theme plain
+skinparam defaultFontName Arial
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #FFF6CC
+  BorderColor #1C2130
+}
+left to right direction
+title Casos de uso — Gestión de celdas (Iteración 2)
+
+actor "Administrador" as admin
+actor "Operador" as operador
+
+rectangle "Sistema Autos Colombia" {
+  usecase "CU-11\nConsultar y buscar celdas" as CU11
+  usecase "CU-12\nCrear celda" as CU12
+  usecase "CU-13\nEditar celda" as CU13
+  usecase "CU-14\nEliminar celda" as CU14
+  usecase "CU-04\nConsultar disponibilidad\nde celdas (iteración 1)" as CU04 #FFFFFF
+
+  usecase "CU-08\nAcceder según el rol" as CU08
+  usecase "Validar código y tipo" as VAL
+  usecase "Comprobar que el código\nno esté repetido" as UNI
+  usecase "Comprobar que la celda\nnunca se ha usado" as USO
+  usecase "Confirmar eliminación" as CONF
+}
+
+admin --> CU11
+admin --> CU12
+admin --> CU13
+admin --> CU14
+operador --> CU04
+
+CU11 ..> CU08 : <<include>>
+CU12 ..> CU08 : <<include>>
+CU13 ..> CU08 : <<include>>
+CU14 ..> CU08 : <<include>>
+CU04 ..> CU08 : <<include>>
+
+CU12 ..> VAL : <<include>>
+CU13 ..> VAL : <<include>>
+CU12 ..> UNI : <<include>>
+CU13 ..> UNI : <<include>>
+CU14 ..> USO : <<include>>
+CU14 ..> CONF : <<include>>
+@enduml

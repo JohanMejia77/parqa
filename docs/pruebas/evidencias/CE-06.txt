@@ -1,0 +1,51 @@
+CE-06 · Código y tipo obligatorios (SD05 y SD06)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:07:27 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> POST /api/celdas   (sesión de admin_prueba)
+   cuerpo: {"tipo":"CARRO"}
+<< 422
+   {"error":"Escribe el código de la celda.","campo":"codigo"}
+   [OK]    crear sin código: 422
+>> POST /api/celdas   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-CE06-1"}
+<< 422
+   {"error":"Elige el tipo de vehículo de la celda: CARRO o MOTO.","campo":"tipo"}
+   [OK]    crear sin tipo: 422
+>> POST /api/celdas   (sesión de admin_prueba)
+   cuerpo: {"codigo":"     ","tipo":"CARRO"}
+<< 422
+   {"error":"Escribe el código de la celda.","campo":"codigo"}
+   [OK]    crear con código de solo espacios: 422
+>> POST /api/celdas   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-CE06-1","tipo":"     "}
+<< 422
+   {"error":"Elige el tipo de vehículo de la celda: CARRO o MOTO.","campo":"tipo"}
+   [OK]    crear con tipo de solo espacios: 422
+>> PATCH /api/celdas/31   (sesión de admin_prueba)
+   cuerpo: {"codigo":""}
+<< 422
+   {"error":"Escribe el código de la celda.","campo":"codigo"}
+   [OK]    editar con código vacío: 422
+>> PATCH /api/celdas/31   (sesión de admin_prueba)
+   cuerpo: {"tipo":"   "}
+<< 422
+   {"error":"Elige el tipo de vehículo de la celda: CARRO o MOTO.","campo":"tipo"}
+   [OK]    editar con tipo de solo espacios: 422
+>> PATCH /api/celdas/31   (sesión de admin_prueba)
+   cuerpo: {}
+<< 422
+   {"error":"Indica el código o el tipo que quieres cambiar."}
+   [OK]    editar sin enviar ningún dato: 422
+BD> La celda de prueba
+    SELECT codigo, tipo FROM celda WHERE id = $1   [31]
+    => [{"codigo":"T-LIBRE-01","tipo":"CARRO"}]
+   [OK]    no se guardó ninguna celda incompleta ni cambió la existente
+UI> envío del formulario vacío (validación del navegador): {"formularioValido":false,"faltan":["codigo","tipo"],"sigueAbierto":true}
+   [OK]    la interfaz exige código y tipo antes de enviar
+UI> código de solo espacios en el campo: ""
+   [OK]    el campo descarta los espacios: sigue vacío y obligatorio
+UI> captura: CE-06-campos-obligatorios.png
+
+Resultado: APROBADO (10 de 10 comprobaciones)

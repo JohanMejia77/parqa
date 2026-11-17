@@ -1,0 +1,18 @@
+PE-01 · Solicitudes sin autenticación (SD02)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:47 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> POST /api/usuarios   (sin sesión)
+   cuerpo: {"nombre":"Sin Sesión","nombreUsuario":"pe01_prueba","contrasena":"<oculta>","rol":"OPERADOR"}
+<< 401
+   {"error":"Inicia sesión para continuar."}
+   [OK]    crear usuario sin sesión: 401
+>> POST /api/celdas   (sin sesión)
+   cuerpo: {"codigo":"T-PE01-1","tipo":"CARRO"}
+<< 401
+   {"error":"Inicia sesión para continuar."}
+   [OK]    crear celda sin sesión: 401
+   [OK]    no se crearon usuarios ni celdas
+
+Resultado: APROBADO (3 de 3 comprobaciones)

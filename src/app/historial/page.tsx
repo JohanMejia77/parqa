@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import Form from "next/form";
 import Link from "next/link";
-import { io } from "next/cache";
 import { HistoryIcon, SearchIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,9 +12,11 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Placa } from "@/components/placa";
+import { SinPermiso } from "@/components/sin-permiso";
 import { TituloPagina } from "@/components/titulo-pagina";
 import { NOMBRE_TIPO, normalizarPlaca, permanencia } from "@/modelos";
 import { listarHistorial } from "@/repositorios/registros";
+import { exigirUsuario } from "@/servicios/autenticacion";
 import { formatearDuracion, formatearFechaHora } from "@/lib/formato";
 import { textoParametro } from "@/lib/parametros";
 
@@ -35,7 +36,9 @@ export default function PaginaHistorial({ searchParams }: PageProps<"/historial"
 }
 
 async function ContenidoHistorial({ searchParams }: Pick<PageProps<"/historial">, "searchParams">) {
-  await io();
+  const usuario = await exigirUsuario();
+  if (usuario.rol !== "OPERADOR") return <SinPermiso usuario={usuario} />;
+
   const placa = normalizarPlaca(textoParametro((await searchParams).placa));
   const registros = await listarHistorial(placa, LIMITE);
   const ahora = new Date();

@@ -3,7 +3,8 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRightToLineIcon, BikeIcon, CarFrontIcon, TriangleAlertIcon } from "lucide-react";
-import { registrarEntradaAccion, type EstadoFormulario } from "@/acciones/registros";
+import type { EstadoFormulario } from "@/acciones/estado";
+import { registrarEntradaAccion } from "@/acciones/registros";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";

@@ -1,0 +1,58 @@
+@startuml sd01-iniciar-sesion
+!theme plain
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBackgroundColor #FFF6CC
+  ParticipantBorderColor #1C2130
+  LifeLineBorderColor #1C2130
+}
+title SD01 · Iniciar sesión (HU-06)
+
+actor "Usuario\n(administrador u operador)" as U
+boundary "Página /login\n(FormularioLogin)" as P
+control "iniciarSesionAccion\n(Server Action)" as A
+control "AutenticacionServicio" as S
+participant "UsuarioRepositorio" as RU
+participant "SesionRepositorio" as RS
+database "PostgreSQL" as BD
+
+U -> P : escribe usuario y contraseña
+P -> A : enviar formulario
+A -> S : iniciarSesion(nombreUsuario, contrasena)
+
+alt falta el usuario o la contraseña
+  S --> A : ErrorNegocio (inválido)
+  A --> P : error bajo el campo que falta
+else datos completos
+  S -> RU : buscarCredenciales(nombreUsuario)
+  RU -> BD : SELECT ... FROM usuario\nWHERE nombre_usuario = $1
+  BD --> RU : cuenta con su hash, o nada
+  RU --> S
+  S -> S : verificarContrasena(contrasena, hash)\nscrypt, comparación en tiempo constante
+
+  alt el usuario no existe o la contraseña no coincide
+    S --> A : ErrorNegocio (no autenticado)
+    A --> P : "Usuario o contraseña incorrectos."
+    P --> U : mismo mensaje en los dos casos
+  else credenciales correctas
+    S -> RS : eliminarSesionesVencidas()
+    RS -> BD : DELETE FROM sesion\nWHERE expira_en <= now()
+    S -> S : genera un token aleatorio (32 bytes)
+    S -> RS : insertarSesion(SHA-256(token), usuarioId, 8 horas)
+    RS -> BD : INSERT INTO sesion
+    BD --> RS : expira_en
+    RS --> S
+    S -> S : guarda el token en la cookie ac_sesion\n(HttpOnly, SameSite=Lax)
+    S --> A : usuario (sin contraseña ni hash)
+    A --> P : redirige a la página de inicio del rol
+    P --> U : Celdas (administrador) o Panel (operador)
+  end
+end
+
+note over A, S
+  La API hace lo mismo con POST /api/sesion:
+  200 con la cookie, 401 si las credenciales
+  no son correctas y 422 si falta un dato.
+end note
+@enduml

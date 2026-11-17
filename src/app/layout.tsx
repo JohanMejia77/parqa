@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Geist, Geist_Mono } from "next/font/google";
 import { Encabezado } from "@/components/encabezado";
+import { obtenerUsuarioActual } from "@/servicios/autenticacion";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,7 +27,8 @@ export const metadata: Metadata = {
     default: "Autos Colombia",
     template: "%s · Autos Colombia",
   },
-  description: "Gestión de entrada y salida de vehículos del parqueadero Autos Colombia.",
+  description:
+    "Gestión del parqueadero Autos Colombia: entradas y salidas de vehículos, usuarios y celdas.",
 };
 
 export const viewport: Viewport = {
@@ -45,7 +48,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Saltar al contenido
         </a>
-        <Encabezado />
+        {/* Mientras se lee la sesión se muestra el encabezado solo con la marca. */}
+        <Suspense fallback={<Encabezado />}>
+          <EncabezadoConSesion />
+        </Suspense>
         <main
           id="contenido"
           className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6"
@@ -55,4 +61,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </body>
     </html>
   );
+}
+
+async function EncabezadoConSesion() {
+  const usuario = await obtenerUsuarioActual();
+  // Al navegador solo viaja lo que el encabezado muestra: el nombre y el rol.
+  return <Encabezado usuario={usuario && { nombre: usuario.nombre, rol: usuario.rol }} />;
 }

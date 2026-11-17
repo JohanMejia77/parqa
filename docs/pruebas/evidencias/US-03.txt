@@ -1,0 +1,34 @@
+US-03 · Credenciales incorrectas (SD01)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:04 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {"nombreUsuario":"admin_prueba","contrasena":"<oculta>"}
+<< 401
+   {"error":"Usuario o contraseña incorrectos."}
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {"nombreUsuario":"usuario_que_no_existe","contrasena":"<oculta>"}
+<< 401
+   {"error":"Usuario o contraseña incorrectos."}
+   [OK]    usuario existente con clave incorrecta: 401
+   [OK]    usuario inexistente: 401
+   [OK]    mismo mensaje genérico en las dos variantes: "Usuario o contraseña incorrectos."
+   [OK]    ningún intento entrega cookie de sesión
+>> GET /api/usuarios   (sin sesión)
+<< 401
+   {"error":"Inicia sesión para continuar."}
+   [OK]    sin sesión no se entra a un módulo protegido por API: 401
+>> GET /celdas   (sin sesión)
+<< 307   Location: /login
+   [OK]    sin sesión, la página protegida redirige a /login
+UI> /login: se escribe el usuario "admin_prueba" y su contraseña (oculta) y se envía el formulario
+UI> mensaje en pantalla: "No se inició la sesión Usuario o contraseña incorrectos."
+UI> página: "/login"
+   [OK]    la interfaz rechaza el intento con el mensaje genérico y sigue en /login
+   [OK]    el navegador no recibe sesión
+UI> captura: US-03-credenciales-incorrectas.png
+UI> al pedir /celdas sin sesión: "/login"
+   [OK]    no se permite entrar al módulo: vuelve a /login
+
+Resultado: APROBADO (9 de 9 comprobaciones)

@@ -1,0 +1,68 @@
+@startuml sd06-editar-celda
+!theme plain
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBackgroundColor #FFF6CC
+  ParticipantBorderColor #1C2130
+  LifeLineBorderColor #1C2130
+}
+title SD06 · Editar celda (HU-13)
+
+actor "Administrador" as U
+boundary "Página /celdas\n(diálogo Editar la celda)" as P
+control "editarCeldaAccion\n(Server Action)" as A
+control "CeldaServicio" as S
+control "AutenticacionServicio" as AU
+participant "CeldaRepositorio" as R
+database "PostgreSQL" as BD
+
+U -> P : pulsa "Editar" en una fila
+P --> U : diálogo con el código y el tipo actuales\n(tipo bloqueado si la celda está ocupada)
+U -> P : cambia el código, el tipo o ambos
+P -> A : enviar formulario (id, codigo, tipo)
+A -> AU : obtenerUsuarioActual()
+AU --> A : actor
+A -> S : editarCelda(actor, id, cambios)
+S -> AU : autorizar(actor, ADMINISTRADOR)
+ref over S, AU : SD02 Verificar la sesión y el rol
+S -> S : valida el código y el tipo enviados
+
+alt algún dato no es válido
+  S --> A : ErrorNegocio (inválido, campo)
+  A --> P : error bajo el campo
+else datos válidos
+  S -> BD : BEGIN
+  S -> R : bloquearCelda(id, FOR UPDATE)
+  R -> BD : SELECT ... FROM celda WHERE id = $1 FOR UPDATE
+  alt la celda no existe
+    S -> BD : ROLLBACK
+    S --> A : ErrorNegocio (no encontrado)
+    A --> P : "La celda no existe ..."
+  else cambia el tipo y la celda está ocupada
+    S -> R : celdaEstaOcupada(id)
+    S -> BD : ROLLBACK
+    S --> A : ErrorNegocio (conflicto, tipo)
+    A --> P : "La celda está ocupada. Cambia su tipo cuando el vehículo salga."
+  else se puede editar
+    S -> R : actualizarCelda(id, codigo, tipo)
+    R -> BD : UPDATE celda SET codigo, tipo WHERE id
+    alt el código ya es de otra celda
+      BD --> R : error 23505 uq_celda_codigo
+      S -> BD : ROLLBACK
+      S --> A : ErrorNegocio (conflicto, codigo)
+      A --> P : "Ya existe una celda con el código ..."
+    else guardado
+      S -> BD : COMMIT
+      S --> A : celda (mismo id, mismo historial)
+      A --> P : éxito + catálogo actualizado
+      P --> U : cierra el diálogo, aviso "Celda actualizada"\ny fila resaltada
+    end
+  end
+end
+
+note over A, S
+  API: PATCH /api/celdas/{id} responde 200,
+  404 si no existe, 409 en conflicto y 422 datos inválidos.
+end note
+@enduml

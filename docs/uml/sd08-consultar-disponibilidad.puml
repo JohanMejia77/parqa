@@ -1,0 +1,39 @@
+@startuml sd08-consultar-disponibilidad
+!theme plain
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #1C2130
+  LifeLineBorderColor #1C2130
+}
+title SD08 · Consultar disponibilidad de celdas (HU-04, iteración 1)
+
+actor "Operador" as U
+boundary "Página /entrada o Panel\n(MapaCeldas)" as P
+control "AutenticacionServicio" as AU
+participant "CeldaRepositorio" as R
+database "PostgreSQL" as BD
+
+U -> P : abre Registrar entrada o el Panel
+P -> AU : exigirUsuario()
+ref over P, AU : SD02 Verificar la sesión y el rol
+AU --> P : actor (operador)
+
+P -> R : listarEstadoCeldas()
+R -> BD : SELECT celda + placa del vehículo\nque la ocupa (registro sin salida)
+BD --> R : celdas con su ocupante
+R --> P
+
+P --> U : plano por tipo: celdas libres y ocupadas,\ncon el número de libres de cada tipo
+U -> P : escribe la placa
+P -> P : deduce el tipo y ofrece solo\nlas celdas libres de ese tipo
+U -> P : elige una celda libre (o deja la primera)
+
+note over P
+  Es una consulta: no reserva la celda ni cambia datos.
+  El operador no ve botones de crear, editar o eliminar celdas.
+  API equivalente: GET /api/celdas/disponibles?tipo=CARRO
+  (200 para el operador, 403 para el administrador).
+end note
+@enduml

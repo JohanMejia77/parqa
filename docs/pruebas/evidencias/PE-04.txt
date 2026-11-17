@@ -1,0 +1,27 @@
+PE-04 · Administrador intenta registrar accesos (SD02)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:56 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+BD> Estancias antes
+    SELECT count(*)::int AS total, count(*) FILTER (WHERE fecha_salida IS NULL)::int AS abiertas FROM registro
+    => [{"total":9,"abiertas":5}]
+>> POST /api/entradas   (sesión de admin_prueba)
+   cuerpo: {"placa":"TST900","celdaId":31}
+<< 403
+   {"error":"Esta operación es solo para el rol operador."}
+   [OK]    registrar entrada con sesión de administrador: 403
+>> POST /api/salidas   (sesión de admin_prueba)
+   cuerpo: {"placa":"TST002"}
+<< 403
+   {"error":"Esta operación es solo para el rol operador."}
+   [OK]    registrar salida con sesión de administrador: 403
+BD> Estancias después
+    SELECT count(*)::int AS total, count(*) FILTER (WHERE fecha_salida IS NULL)::int AS abiertas FROM registro
+    => [{"total":9,"abiertas":5}]
+   [OK]    no se crearon ni cerraron estancias
+UI> página /entrada con sesión de administrador: "Registrar entrada Escribe la placa, confirma la celda y registra la hora de entrada. Tu cuenta no tiene permiso para esta página Iniciaste sesión como administrador: gestionas los usuarios y las celdas. Las entradas y salidas las registra un operador. Ir a Cel"
+   [OK]    la interfaz tampoco le ofrece registrar entradas
+UI> captura: PE-04-administrador-en-entrada.png
+
+Resultado: APROBADO (4 de 4 comprobaciones)

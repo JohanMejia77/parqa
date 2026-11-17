@@ -1,0 +1,44 @@
+CE-07 · Editar celda existente (SD06)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:07:37 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+BD> Estancias antes
+    SELECT count(*)::int AS total, count(*) FILTER (WHERE fecha_salida IS NULL)::int AS abiertas FROM registro
+    => [{"total":9,"abiertas":5}]
+UI> Editar la celda T-LIBRE-01: código "T-LIBRE-02" y tipo MOTO
+UI> captura: CE-07-formulario-edicion.png
+UI> aviso: "Celda actualizada Los cambios de la celda T-LIBRE-02 quedaron guardados."
+   [OK]    la interfaz confirma los cambios
+UI> fila después de recargar: ["T-LIBRE-02 Moto Libre 0 Editar Eliminar"]
+   [OK]    los cambios persisten al recargar
+UI> captura: CE-07-celda-editada.png
+>> GET /api/celdas/31   (sesión de admin_prueba)
+<< 200
+   {"id":31,"codigo":"T-LIBRE-02","tipo":"MOTO","placaOcupante":null,"movimientos":0}
+   [OK]    se conserva el identificador
+>> PATCH /api/celdas/32   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-HIST-02"}
+<< 200
+   {"id":32,"codigo":"T-HIST-02","tipo":"CARRO"}
+   [OK]    API de edición: 200 (se cambia el código de la celda con historial)
+BD> Historial de la celda con historial después de editarla
+    SELECT c.codigo, count(r.id)::int AS movimientos FROM celda c LEFT JOIN registro r ON r.celda_id = c.id WHERE c.id = $1 GROUP BY c.codigo   [32]
+    => [{"codigo":"T-HIST-02","movimientos":1}]
+   [OK]    se conservan las relaciones existentes (su movimiento sigue asociado)
+BD> Estancias después
+    SELECT count(*)::int AS total, count(*) FILTER (WHERE fecha_salida IS NULL)::int AS abiertas FROM registro
+    => [{"total":9,"abiertas":5}]
+   [OK]    editar el catálogo no abrió ni cerró estancias ni liberó ocupaciones
+Restauración del conjunto de prueba:
+>> PATCH /api/celdas/31   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-LIBRE-01","tipo":"CARRO"}
+<< 200
+   {"id":31,"codigo":"T-LIBRE-01","tipo":"CARRO"}
+>> PATCH /api/celdas/32   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-HIST-01"}
+<< 200
+   {"id":32,"codigo":"T-HIST-01","tipo":"CARRO"}
+   [OK]    las celdas de prueba vuelven a sus datos originales
+
+Resultado: APROBADO (7 de 7 comprobaciones)

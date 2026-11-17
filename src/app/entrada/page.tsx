@@ -1,15 +1,16 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { io } from "next/cache";
 import { CircleCheckIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FormularioEntrada } from "@/components/formulario-entrada";
 import { Placa } from "@/components/placa";
+import { SinPermiso } from "@/components/sin-permiso";
 import { TituloPagina } from "@/components/titulo-pagina";
 import { listarEstadoCeldas } from "@/repositorios/celdas";
 import { buscarRegistroPorId } from "@/repositorios/registros";
+import { exigirUsuario } from "@/servicios/autenticacion";
 import { formatearHora } from "@/lib/formato";
 import { idParametro } from "@/lib/parametros";
 
@@ -30,7 +31,9 @@ export default function PaginaEntrada({ searchParams }: PageProps<"/entrada">) {
 }
 
 async function ContenidoEntrada({ searchParams }: Pick<PageProps<"/entrada">, "searchParams">) {
-  await io();
+  const usuario = await exigirUsuario();
+  if (usuario.rol !== "OPERADOR") return <SinPermiso usuario={usuario} />;
+
   const registroId = idParametro((await searchParams).registro);
   const [celdas, registrada] = await Promise.all([
     listarEstadoCeldas(),

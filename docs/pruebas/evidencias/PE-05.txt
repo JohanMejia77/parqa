@@ -1,0 +1,27 @@
+PE-05 · Operador consulta disponibilidad (SD08)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:07:00 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+BD> Estancias antes
+    SELECT count(*)::int AS total, count(*) FILTER (WHERE fecha_salida IS NULL)::int AS abiertas FROM registro
+    => [{"total":9,"abiertas":5}]
+>> GET /api/celdas/disponibles?tipo=CARRO   (sesión de operador_prueba)
+<< 200
+   [{"id":2,"codigo":"A-02","tipo":"CARRO"},{"id":3,"codigo":"A-03","tipo":"CARRO"},{"id":5,"codigo":"A-05","tipo":"CARRO"},{"id":6,"codigo":"A-06","tipo":"CARRO"},{"id":8,"codigo":"A-08","tipo":"CARRO"},{"id":9,"codigo":"A-09","tipo":"CARRO"},{"id":10,"codigo":"A-10","tipo":"CARRO"},{"id":11,"codigo":"A-11","tipo":"CARRO"},{"id":12,"codigo":"A-12","tipo":"CARRO"},{"id":13,"codigo":"A-13","tipo":"CARRO"},{"id":14,"codigo":"A-14","tipo":"CARRO"},{"id":15,"codigo":"A-15","tipo":"CARRO"},{"id":16,"codigo":"A-16","tipo":"CARRO"},{"id":17,"codigo":"A-17","tipo":"CARRO"},{"id":18,"codigo":"A-18","tipo":"CARRO"},{"id":19,"codigo":"A-19","tipo":"CARRO"},{"id":20,"codigo":"A-20","tipo":"CARRO"},{"id":32 …
+   [OK]    puede consultar: la celda libre T-LIBRE-01 aparece disponible
+   [OK]    la celda ocupada T-OCUP-01 no aparece disponible
+UI> plano del formulario de entrada: {"seleccionables":["T-HIST-01","T-LIBRE-01"],"ocupada":"Celda T-OCUP-01: ocupada por TST002","botonesDeAdministracion":0}
+   [OK]    en la interfaz puede seleccionar la celda libre y no la ocupada
+   [OK]    la celda ocupada se muestra como ocupada
+   [OK]    no recibe botones ni permisos de administración
+UI> captura: PE-05-disponibilidad-operador.png
+>> GET /api/celdas/disponibles?tipo=CARRO   (sesión de operador_prueba)
+<< 200
+   [{"id":2,"codigo":"A-02","tipo":"CARRO"},{"id":3,"codigo":"A-03","tipo":"CARRO"},{"id":5,"codigo":"A-05","tipo":"CARRO"},{"id":6,"codigo":"A-06","tipo":"CARRO"},{"id":8,"codigo":"A-08","tipo":"CARRO"},{"id":9,"codigo":"A-09","tipo":"CARRO"},{"id":10,"codigo":"A-10","tipo":"CARRO"},{"id":11,"codigo":"A-11","tipo":"CARRO"},{"id":12,"codigo":"A-12","tipo":"CARRO"},{"id":13,"codigo":"A-13","tipo":"CARRO"},{"id":14,"codigo":"A-14","tipo":"CARRO"},{"id":15,"codigo":"A-15","tipo":"CARRO"},{"id":16,"codigo":"A-16","tipo":"CARRO"},{"id":17,"codigo":"A-17","tipo":"CARRO"},{"id":18,"codigo":"A-18","tipo":"CARRO"},{"id":19,"codigo":"A-19","tipo":"CARRO"},{"id":20,"codigo":"A-20","tipo":"CARRO"},{"id":32 …
+BD> Estancias después de consultar y seleccionar
+    SELECT count(*)::int AS total, count(*) FILTER (WHERE fecha_salida IS NULL)::int AS abiertas FROM registro
+    => [{"total":9,"abiertas":5}]
+   [OK]    la consulta no reserva la celda: no se creó ninguna estancia
+
+Resultado: APROBADO (6 de 6 comprobaciones)

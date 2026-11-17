@@ -1,0 +1,30 @@
+CE-04 · Crear celda y comprobar persistencia (SD05)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:07:17 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+BD> Estancias antes
+    SELECT count(*)::int AS total FROM registro
+    => [{"total":9}]
+>> POST /api/celdas   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-NUEVA-01","tipo":"CARRO"}
+<< 201
+   {"id":35,"codigo":"T-NUEVA-01","tipo":"CARRO"}
+   [OK]    API confirma la creación con 201
+UI> fila después de recargar la pantalla: ["T-NUEVA-01 Carro Libre 0 Editar Eliminar"]
+   [OK]    los datos persisten al recargar; la celda aparece libre y sin movimientos
+UI> captura: CE-04-celda-persistida.png
+>> GET /api/celdas/35   (sesión de admin_nuevo)
+<< 200
+   {"id":35,"codigo":"T-NUEVA-01","tipo":"CARRO","placaOcupante":null,"movimientos":0}
+   [OK]    otra sesión la consulta de nuevo y la encuentra
+BD> Celdas con ese código
+    SELECT id, codigo, tipo FROM celda WHERE codigo = 'T-NUEVA-01'
+    => [{"id":35,"codigo":"T-NUEVA-01","tipo":"CARRO"}]
+   [OK]    existe una sola celda con ese código
+BD> Estancias después
+    SELECT count(*)::int AS total FROM registro
+    => [{"total":9}]
+   [OK]    no se creó ninguna estancia ni se marcó ocupada manualmente
+
+Resultado: APROBADO (5 de 5 comprobaciones)

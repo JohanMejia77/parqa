@@ -1,0 +1,29 @@
+US-04 · Campos obligatorios del login (SD01)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:06 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {"nombreUsuario":"","contrasena":"<oculta>"}
+<< 422
+   {"error":"Escribe tu usuario.","campo":"nombreUsuario"}
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {"nombreUsuario":"admin_prueba","contrasena":"<oculta>"}
+<< 422
+   {"error":"Escribe tu contraseña.","campo":"contrasena"}
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {}
+<< 422
+   {"error":"Escribe tu usuario.","campo":"nombreUsuario"}
+   [OK]    API con usuario vacío: 422 e indica el campo nombreUsuario
+   [OK]    API con clave vacía: 422 e indica el campo contrasena
+   [OK]    API sin ningún dato: 422
+   [OK]    el servidor no crea sesión en ningún caso
+UI> envío con usuario vacío (validación del navegador): {"formularioValido":false,"faltaUsuario":true,"mensaje":"Rellena este campo."}
+   [OK]    la interfaz indica que falta el usuario y no envía el formulario
+UI> envío con clave vacía (validación del navegador): {"faltaClave":true,"mensaje":"Rellena este campo.","pagina":"/login"}
+   [OK]    la interfaz indica que falta la contraseña y sigue en /login
+   [OK]    no se creó sesión
+UI> captura: US-04-campos-obligatorios.png
+
+Resultado: APROBADO (7 de 7 comprobaciones)

@@ -1,0 +1,26 @@
+US-09 · Usuario de acceso duplicado (SD03)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:41 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"Otro Operador","nombreUsuario":"operador_prueba","contrasena":"<oculta>","rol":"OPERADOR"}
+<< 409
+   {"error":"Ya existe una cuenta con el usuario operador_prueba. Elige otro.","campo":"nombreUsuario"}
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"Otro Operador","nombreUsuario":" OPERADOR_PRUEBA ","contrasena":"<oculta>","rol":"OPERADOR"}
+<< 409
+   {"error":"Ya existe una cuenta con el usuario operador_prueba. Elige otro.","campo":"nombreUsuario"}
+   [OK]    API: 409 con el mismo usuario de acceso
+   [OK]    API: 409 también si cambia mayúsculas o espacios
+BD> Cuentas con ese usuario
+    SELECT id, nombre FROM usuario WHERE nombre_usuario = 'operador_prueba'
+    => [{"id":2,"nombre":"Operador de Prueba"}]
+   [OK]    sigue existiendo una sola cuenta, con sus datos originales
+   [OK]    no quedó ninguna cuenta ni perfil adicional
+UI> error en el diálogo: "Ya existe una cuenta con el usuario operador_prueba. Elige otro."
+   [OK]    la interfaz rechaza la duplicación y explica el motivo bajo el campo Usuario
+UI> captura: US-09-usuario-duplicado.png
+   [OK]    tampoco se creó nada desde la interfaz
+
+Resultado: APROBADO (6 de 6 comprobaciones)

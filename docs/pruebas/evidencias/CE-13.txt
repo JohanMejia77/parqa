@@ -1,0 +1,21 @@
+CE-13 · Crear el mismo código simultáneamente (SD05)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:07:52 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+Dos sesiones de administrador (admin_prueba y admin_nuevo) envían la misma creación a la vez con Promise.all.
+>> POST /api/celdas   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-CONC-01","tipo":"CARRO"}
+<< 201
+   {"id":40,"codigo":"T-CONC-01","tipo":"CARRO"}
+>> POST /api/celdas   (sesión de admin_nuevo)
+   cuerpo: {"codigo":"T-CONC-01","tipo":"CARRO"}
+<< 409
+   {"error":"Ya existe una celda con el código T-CONC-01. Usa otro código.","campo":"codigo"}
+   [OK]    solo una creación se confirma y la otra recibe conflicto: 201 y 409
+BD> Celdas con ese código
+    SELECT id, codigo, tipo FROM celda WHERE codigo = 'T-CONC-01'
+    => [{"id":40,"codigo":"T-CONC-01","tipo":"CARRO"}]
+   [OK]    persiste exactamente una celda con ese código
+
+Resultado: APROBADO (2 de 2 comprobaciones)

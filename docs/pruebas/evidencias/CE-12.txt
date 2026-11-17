@@ -1,0 +1,25 @@
+CE-12 · Eliminar celda ocupada (SD07)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:07:52 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+BD> Estancia abierta antes
+    SELECT r.id, v.placa, r.fecha_entrada, r.fecha_salida FROM registro r JOIN vehiculo v ON v.id = r.vehiculo_id WHERE r.celda_id = $1 AND r.fecha_salida IS NULL   [33]
+    => [{"id":9,"placa":"TST002","fecha_entrada":"2026-11-12T03:05:44.731Z","fecha_salida":null}]
+>> DELETE /api/celdas/33   (sesión de admin_prueba)
+<< 409
+   {"error":"La celda T-OCUP-01 está ocupada por el vehículo TST002 y no se puede eliminar."}
+   [OK]    API: 409 ("La celda T-OCUP-01 está ocupada por el vehículo TST002 y no se puede eliminar.")
+>> GET /api/celdas/33   (sesión de admin_prueba)
+<< 200
+   {"id":33,"codigo":"T-OCUP-01","tipo":"CARRO","placaOcupante":"TST002","movimientos":1}
+BD> Estancia abierta después
+    SELECT r.id, v.placa, r.fecha_entrada, r.fecha_salida FROM registro r JOIN vehiculo v ON v.id = r.vehiculo_id WHERE r.celda_id = $1 AND r.fecha_salida IS NULL   [33]
+    => [{"id":9,"placa":"TST002","fecha_entrada":"2026-11-12T03:05:44.731Z","fecha_salida":null}]
+   [OK]    se conserva la celda, que sigue ocupada
+   [OK]    la estancia abierta conserva sus datos originales
+UI> diálogo: {"titulo":"La celda T-OCUP-01 no se puede eliminar","motivo":"Está ocupada por el vehículo TST002. Las celdas que ya se usaron se conservan para no perder sus registros."}
+   [OK]    la interfaz explica que la celda está ocupada
+UI> captura: CE-12-celda-ocupada.png
+
+Resultado: APROBADO (4 de 4 comprobaciones)

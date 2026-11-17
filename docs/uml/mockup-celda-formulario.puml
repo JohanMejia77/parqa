@@ -1,0 +1,35 @@
+@startsalt mockup-celda-formulario
+title Mockup HU-12 y HU-13 · Crear y editar celda (diálogos)
+{
+  {+
+    <size:16><b>Nueva celda</b></size>
+    Queda libre y lista para asignarla a un vehículo.
+    .
+    Código
+    "A-21        "
+    Hasta 10 caracteres: letras, números y guiones.
+    No se puede repetir.
+    .
+    Tipo de vehículo
+    { {+ (X) <b>Carro</b>     } | {+ () <b>Moto</b>     } }
+    Solo se asigna a vehículos de este tipo.
+    --
+    { . | . | [ Cancelar ] | [ Crear celda ] }
+  } | . | {+
+    <size:16><b>Editar la celda A-01</b></size>
+    La celda conserva su historial de movimientos.
+    .
+    Código
+    "A-02        "
+    <color:red>Ya existe una celda con el código A-02.</color>
+    <color:red>Usa otro código.</color>
+    .
+    Tipo de vehículo (bloqueado)
+    { {+ (X) <b>Carro</b>     } | {+ () <b>Moto</b>     } }
+    Está ocupada por el vehículo KJT482: el tipo
+    se puede cambiar cuando salga.
+    --
+    { . | . | [ Cancelar ] | [ Guardar cambios ] }
+  }
+}
+@endsalt

@@ -1,0 +1,39 @@
+US-07 · Crear una cuenta de operador (SD03)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:27 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+UI> Usuarios > Crear usuario: nombre "Operador Nuevo", usuario "operador_nuevo", rol OPERADOR y una contraseña (oculta)
+UI> captura: US-07-formulario.png
+UI> aviso: "Cuenta creada Operador Nuevo ya puede iniciar sesión como operador con el usuario operador_nuevo."
+   [OK]    la interfaz confirma la cuenta creada
+UI> captura: US-07-cuenta-creada.png
+BD> Cuentas con ese usuario
+    SELECT nombre_usuario, nombre, rol FROM usuario WHERE nombre_usuario = 'operador_nuevo'
+    => [{"nombre_usuario":"operador_nuevo","nombre":"Operador Nuevo","rol":"OPERADOR"}]
+   [OK]    se creó una sola cuenta, con su perfil (nombre) y rol OPERADOR en la misma fila
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {"nombreUsuario":"operador_nuevo","contrasena":"<oculta>"}
+<< 200   Set-Cookie: ac_sesion=<oculto>; Path=/; Expires=Thu, 12 Nov 2026 11:06:27 GMT; HttpOnly; SameSite=lax
+   {"id":3,"nombreUsuario":"operador_nuevo","nombre":"Operador Nuevo","rol":"OPERADOR","creadoEn":"2026-11-12T03:06:24.289Z"}
+   [OK]    la cuenta nueva puede iniciar sesión
+>> GET /api/celdas/disponibles   (sesión de operador_nuevo)
+<< 200
+   [{"id":2,"codigo":"A-02","tipo":"CARRO"},{"id":3,"codigo":"A-03","tipo":"CARRO"},{"id":5,"codigo":"A-05","tipo":"CARRO"},{"id":6,"codigo":"A-06","tipo":"CARRO"},{"id":8,"codigo":"A-08","tipo":"CARRO"},{"id":9,"codigo":"A-09","tipo":"CARRO"},{"id":10,"codigo":"A-10","tipo":"CARRO"},{"id":11,"codigo":"A-11","tipo":"CARRO"},{"id":12,"codigo":"A-12","tipo":"CARRO"},{"id":13,"codigo":"A-13","tipo":"CARRO"},{"id":14,"codigo":"A-14","tipo":"CARRO"},{"id":15,"codigo":"A-15","tipo":"CARRO"},{"id":16,"codigo":"A-16","tipo":"CARRO"},{"id":17,"codigo":"A-17","tipo":"CARRO"},{"id":18,"codigo":"A-18","tipo":"CARRO"},{"id":19,"codigo":"A-19","tipo":"CARRO"},{"id":20,"codigo":"A-20","tipo":"CARRO"},{"id":21 …
+   [OK]    recibe los permisos de operador (consulta de disponibilidad: 200)
+>> POST /api/usuarios   (sesión de operador_nuevo)
+   cuerpo: {"nombre":"Otra Persona","nombreUsuario":"no_debe_crearse","contrasena":"<oculta>","rol":"OPERADOR"}
+<< 403
+   {"error":"Esta operación es solo para el rol administrador."}
+   [OK]    no recibe permisos de administrador (crear usuarios: 403)
+>> GET /api/celdas   (sesión de operador_nuevo)
+<< 403
+   {"error":"Esta operación es solo para el rol administrador."}
+   [OK]    no recibe permisos de administrador (catálogo de celdas: 403)
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"Operador por API","nombreUsuario":"operador_api","contrasena":"<oculta>","rol":"OPERADOR"}
+<< 201
+   {"id":4,"nombreUsuario":"operador_api","nombre":"Operador por API","rol":"OPERADOR","creadoEn":"2026-11-12T03:06:27.978Z"}
+   [OK]    API de creación: 201 (segunda cuenta de operador, creada por API)
+
+Resultado: APROBADO (7 de 7 comprobaciones)

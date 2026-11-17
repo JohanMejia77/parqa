@@ -4,6 +4,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Curvas de movimiento con más carácter que las de CSS: arrancan rápido y frenan suave.
+   Reemplazan a ease-out y ease-in-out de Tailwind en toda la aplicación. */
+@theme {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -147,5 +154,157 @@
   button,
   input {
     touch-action: manipulation;
+  }
+  /* Edge añade su propio botón para ver la contraseña; se oculta porque el campo ya trae uno. */
+  input[type="password"]::-ms-reveal {
+    display: none;
+  }
+  /* En pantallas táctiles, botones y campos tienen al menos 44 px para tocarlos sin fallar. */
+  @media (pointer: coarse) {
+    [data-slot="button"] {
+      min-block-size: 2.75rem;
+      min-inline-size: 2.75rem;
+    }
+    [data-slot="input"] {
+      min-block-size: 2.75rem;
+    }
+  }
+}
+
+/* =============================================================
+   Movimiento
+   Solo se anima lo que ayuda a entender un cambio, con transform y
+   opacity. Quien pide menos movimiento conserva el desvanecido y
+   pierde el desplazamiento y la escala.
+   ============================================================= */
+
+/* Aparición de lo que se muestra pocas veces: avisos de resultado y la tarjeta de inicio de sesión. */
+.aparece {
+  transition:
+    opacity 220ms var(--ease-out),
+    translate 220ms var(--ease-out);
+}
+@starting-style {
+  .aparece {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @starting-style {
+    .aparece {
+      translate: 0 6px;
+    }
+  }
+}
+
+/* Fila recién creada o editada: un destello del amarillo de la placa que se apaga solo.
+   Es un cambio de color, sin movimiento, así que se conserva con movimiento reducido. */
+@keyframes destello-fila {
+  from {
+    background-color: color-mix(in oklch, var(--placa) 45%, transparent);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+.fila-destacada {
+  animation: destello-fila 1600ms var(--ease-out);
+}
+
+/* Diálogo modal nativo (<dialog> abierto con showModal).
+   Entra con @starting-style; sale con la transición de display y overlay, o con
+   [data-closing] en los navegadores que aún no la tienen (ver components/ui/dialogo.tsx). */
+.dialogo {
+  opacity: 0;
+  transition-property: opacity, scale, display, overlay;
+  transition-duration: 150ms; /* la salida es más corta que la entrada */
+  transition-timing-function: var(--ease-out);
+  transition-behavior: allow-discrete;
+}
+.dialogo:modal {
+  overscroll-behavior: contain;
+}
+.dialogo::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background-color: transparent;
+  transition-property: background-color, display, overlay;
+  transition-duration: 150ms;
+  transition-timing-function: var(--ease-out);
+  transition-behavior: allow-discrete;
+}
+.dialogo[open]:where(:not([data-closing])) {
+  opacity: 1;
+  transition-duration: 220ms;
+}
+.dialogo[open]:where(:not([data-closing]))::backdrop {
+  background-color: oklch(0.21 0.02 262 / 45%);
+  transition-duration: 220ms;
+}
+@starting-style {
+  .dialogo[open]:where(:not([data-closing])) {
+    opacity: 0;
+  }
+  .dialogo[open]:where(:not([data-closing]))::backdrop {
+    background-color: transparent;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dialogo {
+    scale: 0.96;
+  }
+  .dialogo[open]:where(:not([data-closing])) {
+    scale: 1;
+  }
+  @starting-style {
+    .dialogo[open]:where(:not([data-closing])) {
+      scale: 0.96;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dialogo,
+  .dialogo::backdrop {
+    transition-duration: 100ms;
+  }
+}
+
+/* =============================================================
+   Tabla adaptable (components/tabla-adaptable.tsx)
+   Cuando su contenedor es angosto, cada fila se muestra como una
+   ficha y cada celda lleva delante el nombre de su columna.
+   ============================================================= */
+.tabla-contenedor {
+  container-type: inline-size;
+}
+@container (width < 36rem) {
+  .tabla-adaptable,
+  .tabla-adaptable tbody,
+  .tabla-adaptable tr,
+  .tabla-adaptable th,
+  .tabla-adaptable td {
+    display: block;
+  }
+  .tabla-adaptable thead {
+    display: none;
+  }
+  .tabla-adaptable tr {
+    padding-block: 0.75rem;
+  }
+  .tabla-adaptable tbody th {
+    padding-block: 0 0.25rem;
+    font-size: 1rem;
+  }
+  .tabla-adaptable td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.25rem;
+    white-space: normal;
+  }
+  .tabla-adaptable td[data-etiqueta]::before {
+    content: attr(data-etiqueta);
+    color: var(--muted-foreground);
   }
 }

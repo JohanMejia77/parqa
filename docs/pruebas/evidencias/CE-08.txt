@@ -1,0 +1,16 @@
+CE-08 · Editar con código de otra celda (SD06)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:07:37 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> PATCH /api/celdas/31   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-HIST-01"}
+<< 409
+   {"error":"Ya existe una celda con el código T-HIST-01. Usa otro código.","campo":"codigo"}
+   [OK]    API: 409
+BD> Las dos celdas después del intento
+    SELECT id, codigo, tipo FROM celda WHERE id IN ($1, $2) ORDER BY codigo   [31,32]
+    => [{"id":32,"codigo":"T-HIST-01","tipo":"CARRO"},{"id":31,"codigo":"T-LIBRE-01","tipo":"CARRO"}]
+   [OK]    se revierte el cambio: ambas celdas conservan sus datos anteriores
+
+Resultado: APROBADO (2 de 2 comprobaciones)

@@ -1,0 +1,19 @@
+US-02 · Login del operador (SD01)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:05:56 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {"nombreUsuario":"operador_prueba","contrasena":"<oculta>"}
+<< 200   Set-Cookie: ac_sesion=<oculto>; Path=/; Expires=Thu, 12 Nov 2026 11:05:51 GMT; HttpOnly; SameSite=lax
+   {"id":2,"nombreUsuario":"operador_prueba","nombre":"Operador de Prueba","rol":"OPERADOR","creadoEn":"2026-11-12T03:05:44.033Z"}
+   [OK]    API de login: 200 y rol OPERADOR
+UI> /login: se escribe el usuario "operador_prueba" y su contraseña (oculta) y se envía el formulario
+UI> página a la que llega: "/"
+UI> opciones del menú: ["Panel","Entrada","Salida","Historial"]
+   [OK]    acceso concedido: llega al Panel
+   [OK]    el menú muestra Panel (consulta de vehículos), Entrada, Salida e Historial
+   [OK]    no aparecen Usuarios ni administración de celdas
+UI> captura: US-02-menu-operador.png
+
+Resultado: APROBADO (4 de 4 comprobaciones)

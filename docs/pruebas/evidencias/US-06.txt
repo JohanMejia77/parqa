@@ -1,0 +1,50 @@
+US-06 · Cierre de sesión efectivo (SD12)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:20 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {"nombreUsuario":"admin_prueba","contrasena":"<oculta>"}
+<< 200   Set-Cookie: ac_sesion=<oculto>; Path=/; Expires=Thu, 12 Nov 2026 11:06:10 GMT; HttpOnly; SameSite=lax
+   {"id":1,"nombreUsuario":"admin_prueba","nombre":"Administrador principal","rol":"ADMINISTRADOR","creadoEn":"2026-11-12T03:05:40.050Z"}
+>> GET /api/sesion   (sesión de admin_prueba)
+<< 200
+   {"id":1,"nombreUsuario":"admin_prueba","nombre":"Administrador principal","rol":"ADMINISTRADOR","creadoEn":"2026-11-12T03:05:40.050Z"}
+   [OK]    admin_prueba: la sesión es válida antes de cerrar
+>> DELETE /api/sesion   (sesión de admin_prueba)
+<< 204   Set-Cookie: ac_sesion=<oculto>; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+   [OK]    admin_prueba: cierre de sesión por API: 204
+>> GET /api/sesion   (sesión anterior de admin_prueba, ya cerrada)
+<< 401
+   {"error":"Inicia sesión para continuar."}
+   [OK]    admin_prueba: la sesión anterior ya no autoriza solicitudes (401)
+   [OK]    admin_prueba: la sesión ya no existe en la base de datos
+>> POST /api/sesion   (sin sesión)
+   cuerpo: {"nombreUsuario":"operador_prueba","contrasena":"<oculta>"}
+<< 200   Set-Cookie: ac_sesion=<oculto>; Path=/; Expires=Thu, 12 Nov 2026 11:06:11 GMT; HttpOnly; SameSite=lax
+   {"id":2,"nombreUsuario":"operador_prueba","nombre":"Operador de Prueba","rol":"OPERADOR","creadoEn":"2026-11-12T03:05:44.033Z"}
+>> GET /api/sesion   (sesión de operador_prueba)
+<< 200
+   {"id":2,"nombreUsuario":"operador_prueba","nombre":"Operador de Prueba","rol":"OPERADOR","creadoEn":"2026-11-12T03:05:44.033Z"}
+   [OK]    operador_prueba: la sesión es válida antes de cerrar
+>> DELETE /api/sesion   (sesión de operador_prueba)
+<< 204   Set-Cookie: ac_sesion=<oculto>; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+   [OK]    operador_prueba: cierre de sesión por API: 204
+>> GET /api/sesion   (sesión anterior de operador_prueba, ya cerrada)
+<< 401
+   {"error":"Inicia sesión para continuar."}
+   [OK]    operador_prueba: la sesión anterior ya no autoriza solicitudes (401)
+   [OK]    operador_prueba: la sesión ya no existe en la base de datos
+UI> /login: se escribe el usuario "admin_prueba" y su contraseña (oculta) y se envía el formulario
+   [OK]    se inicia sesión en el navegador
+UI> página después de pulsar Cerrar sesión: "/login"
+   [OK]    se muestra el login
+UI> captura: US-06-despues-de-cerrar.png
+UI> al volver a abrir una ruta protegida: "/login"
+   [OK]    la ruta protegida vuelve a pedir autenticación
+>> GET /api/celdas   (cookie anterior del navegador)
+<< 401
+   {"error":"Inicia sesión para continuar."}
+   [OK]    reutilizar la sesión anterior por API responde 401
+
+Resultado: APROBADO (12 de 12 comprobaciones)

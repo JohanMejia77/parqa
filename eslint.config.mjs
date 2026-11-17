@@ -14,6 +14,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Skills de agentes de IA instaladas con `npx skills add` (no son código del proyecto).
     ".claude/**",
+    ".agents/**",
   ]),
 ]);
 

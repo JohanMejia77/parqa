@@ -1,0 +1,26 @@
+@startsalt mockup-celdas
+title Mockup HU-11 · Consultar y buscar celdas
+{+
+  {/ <b>Autos Colombia</b> | <b>Celdas</b> | Usuarios | . | Administrador principal (Administrador) | [ <&account-logout> Cerrar sesión ] }
+  .
+  { <size:16><b>Celdas</b></size> | . | . | . | [ <&plus> Nueva celda ] }
+  Catálogo de los espacios del parqueadero.
+  .
+  {+
+    <b>Catálogo</b>
+    30 celdas: 20 para carros y 10 para motos. 4 ocupadas en este momento.
+    .
+    { Buscar por código | . | Tipo }
+    { "Ej. A-0        " | . | (X) Todas | () Carros | () Motos | . | [ <&magnifying-glass> Buscar ] }
+    --
+    {#
+      <b>Código</b> | <b>Tipo</b> | <b>Estado</b> | <b>Movimientos</b> | . | .
+      <b>A-01</b> | Carro | <b>Ocupada</b> · KJT 482 | 1 | [ <&pencil> Editar ] | [ <&trash> Eliminar ]
+      <b>A-02</b> | Carro | Libre | 1 | [ <&pencil> Editar ] | [ <&trash> Eliminar ]
+      <b>A-03</b> | Carro | Libre | 0 | [ <&pencil> Editar ] | [ <&trash> Eliminar ]
+      <b>M-01</b> | Moto | Libre | 1 | [ <&pencil> Editar ] | [ <&trash> Eliminar ]
+      <b>M-02</b> | Moto | <b>Ocupada</b> · RTP 37F | 1 | [ <&pencil> Editar ] | [ <&trash> Eliminar ]
+    }
+  }
+}
+@endsalt

@@ -1,0 +1,50 @@
+@startuml casos-de-uso-usuarios
+!theme plain
+skinparam defaultFontName Arial
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #FFF6CC
+  BorderColor #1C2130
+}
+left to right direction
+title Casos de uso — Gestión de usuarios (Iteración 2)
+
+actor "Usuario del sistema" as usuario
+actor "Administrador" as admin
+actor "Operador" as operador
+
+admin -up-|> usuario
+operador -up-|> usuario
+
+rectangle "Sistema Autos Colombia" {
+  usecase "CU-06\nIniciar sesión" as CU06
+  usecase "CU-07\nCerrar sesión" as CU07
+  usecase "CU-08\nAcceder según el rol" as CU08
+  usecase "CU-09\nCrear usuario" as CU09
+  usecase "CU-10\nConsultar usuarios" as CU10
+
+  usecase "Validar usuario\ny contraseña" as VAL
+  usecase "Abrir sesión\n(8 horas)" as SES
+  usecase "Asignar rol\n(administrador u operador)" as ROL
+  usecase "Guardar solo el hash\nde la contraseña" as HASH
+}
+
+usuario --> CU06
+usuario --> CU07
+admin --> CU09
+admin --> CU10
+
+CU06 ..> VAL : <<include>>
+CU06 ..> SES : <<include>>
+CU09 ..> ROL : <<include>>
+CU09 ..> HASH : <<include>>
+CU09 ..> CU08 : <<include>>
+CU10 ..> CU08 : <<include>>
+
+note right of CU08
+  Toda operación protegida comprueba
+  la sesión y el rol. También lo incluyen
+  los casos de uso de celdas (CU-11 a CU-14)
+  y los del operador (CU-01 a CU-05).
+end note
+@enduml

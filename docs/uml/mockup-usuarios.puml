@@ -1,0 +1,25 @@
+@startsalt mockup-usuarios
+title Mockup HU-10 · Consultar usuarios
+{+
+  {/ <b>Autos Colombia</b> | Celdas | <b>Usuarios</b> | . | Administrador principal (Administrador) | [ <&account-logout> Cerrar sesión ] }
+  .
+  { <size:16><b>Usuarios</b></size> | . | . | . | [ <&plus> Crear usuario ] }
+  Cuentas con acceso al sistema y el rol de cada una.
+  .
+  {+
+    <color:green><&circle-check> <b>Cuenta creada</b></color>
+    Laura Gómez ya puede iniciar sesión como operador con el usuario laura.gomez.
+  }
+  .
+  {+
+    <b>Cuentas</b>
+    3 cuentas: 1 administrador y 2 operadores.
+    {#
+      <b>Nombre</b> | <b>Usuario</b> | <b>Rol</b> | <b>Creada</b>
+      Administrador principal (Tu cuenta) | admin | <b>Administrador</b> | 11 de nov de 2026
+      Carlos Pérez | carlos.perez | Operador | 11 de nov de 2026
+      Laura Gómez | laura.gomez | Operador | 11 de nov de 2026
+    }
+  }
+}
+@endsalt

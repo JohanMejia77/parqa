@@ -1,0 +1,1016 @@
+{
+ "00-preparacion": {
+  "titulo": "Preparación del conjunto de prueba",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "admin_prueba (rol ADMINISTRADOR) existe y puede iniciar sesión",
+    "ok": true
+   },
+   {
+    "texto": "operador_prueba creado con rol OPERADOR",
+    "ok": true
+   },
+   {
+    "texto": "celda T-LIBRE-01 creada",
+    "ok": true
+   },
+   {
+    "texto": "celda T-HIST-01 creada",
+    "ok": true
+   },
+   {
+    "texto": "celda T-OCUP-01 creada",
+    "ok": true
+   },
+   {
+    "texto": "celda T-ELIM-01 creada",
+    "ok": true
+   },
+   {
+    "texto": "operador_prueba puede iniciar sesión",
+    "ok": true
+   },
+   {
+    "texto": "T-HIST-01: entrada de TST001",
+    "ok": true
+   },
+   {
+    "texto": "T-HIST-01: salida de TST001 (queda libre y con historial)",
+    "ok": true
+   },
+   {
+    "texto": "T-OCUP-01: entrada de TST002 (queda ocupada)",
+    "ok": true
+   },
+   {
+    "texto": "T-NUEVA-01 y T-CONC-01 no existen todavía",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "00-preparacion.txt"
+  ]
+ },
+ "US-01": {
+  "titulo": "Login del administrador (SD01)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API de login: 200 y rol ADMINISTRADOR",
+    "ok": true
+   },
+   {
+    "texto": "la cookie de sesión es HttpOnly y SameSite=Lax",
+    "ok": true
+   },
+   {
+    "texto": "la respuesta no incluye contraseña ni hash",
+    "ok": true
+   },
+   {
+    "texto": "acceso concedido: llega a Celdas",
+    "ok": true
+   },
+   {
+    "texto": "el menú muestra Celdas y Usuarios",
+    "ok": true
+   },
+   {
+    "texto": "no se muestran operaciones de entrada/salida",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "US-01.txt",
+   "US-01-menu-administrador.png"
+  ]
+ },
+ "US-02": {
+  "titulo": "Login del operador (SD01)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API de login: 200 y rol OPERADOR",
+    "ok": true
+   },
+   {
+    "texto": "acceso concedido: llega al Panel",
+    "ok": true
+   },
+   {
+    "texto": "el menú muestra Panel (consulta de vehículos), Entrada, Salida e Historial",
+    "ok": true
+   },
+   {
+    "texto": "no aparecen Usuarios ni administración de celdas",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "US-02.txt",
+   "US-02-menu-operador.png"
+  ]
+ },
+ "US-03": {
+  "titulo": "Credenciales incorrectas (SD01)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "usuario existente con clave incorrecta: 401",
+    "ok": true
+   },
+   {
+    "texto": "usuario inexistente: 401",
+    "ok": true
+   },
+   {
+    "texto": "mismo mensaje genérico en las dos variantes: \"Usuario o contraseña incorrectos.\"",
+    "ok": true
+   },
+   {
+    "texto": "ningún intento entrega cookie de sesión",
+    "ok": true
+   },
+   {
+    "texto": "sin sesión no se entra a un módulo protegido por API: 401",
+    "ok": true
+   },
+   {
+    "texto": "sin sesión, la página protegida redirige a /login",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz rechaza el intento con el mensaje genérico y sigue en /login",
+    "ok": true
+   },
+   {
+    "texto": "el navegador no recibe sesión",
+    "ok": true
+   },
+   {
+    "texto": "no se permite entrar al módulo: vuelve a /login",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "US-03.txt",
+   "US-03-credenciales-incorrectas.png"
+  ]
+ },
+ "US-04": {
+  "titulo": "Campos obligatorios del login (SD01)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API con usuario vacío: 422 e indica el campo nombreUsuario",
+    "ok": true
+   },
+   {
+    "texto": "API con clave vacía: 422 e indica el campo contrasena",
+    "ok": true
+   },
+   {
+    "texto": "API sin ningún dato: 422",
+    "ok": true
+   },
+   {
+    "texto": "el servidor no crea sesión en ningún caso",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz indica que falta el usuario y no envía el formulario",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz indica que falta la contraseña y sigue en /login",
+    "ok": true
+   },
+   {
+    "texto": "no se creó sesión",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "US-04.txt",
+   "US-04-campos-obligatorios.png"
+  ]
+ },
+ "US-05": {
+  "titulo": "Sesión vencida o revocada (SD02)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "se prepararon una sesión vencida y una revocada",
+    "ok": true
+   },
+   {
+    "texto": "sesión vencida: la consulta protegida responde 401",
+    "ok": true
+   },
+   {
+    "texto": "sesión vencida: la operación protegida responde 401",
+    "ok": true
+   },
+   {
+    "texto": "sesión revocada: la consulta protegida responde 401",
+    "ok": true
+   },
+   {
+    "texto": "sesión revocada: la operación protegida responde 401",
+    "ok": true
+   },
+   {
+    "texto": "no se consultó ni se cambió información: el catálogo sigue igual",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz solicita autenticarse (vuelve a /login)",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "US-05.txt",
+   "US-05-sesion-vencida.png"
+  ]
+ },
+ "US-06": {
+  "titulo": "Cierre de sesión efectivo (SD12)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "admin_prueba: la sesión es válida antes de cerrar",
+    "ok": true
+   },
+   {
+    "texto": "admin_prueba: cierre de sesión por API: 204",
+    "ok": true
+   },
+   {
+    "texto": "admin_prueba: la sesión anterior ya no autoriza solicitudes (401)",
+    "ok": true
+   },
+   {
+    "texto": "admin_prueba: la sesión ya no existe en la base de datos",
+    "ok": true
+   },
+   {
+    "texto": "operador_prueba: la sesión es válida antes de cerrar",
+    "ok": true
+   },
+   {
+    "texto": "operador_prueba: cierre de sesión por API: 204",
+    "ok": true
+   },
+   {
+    "texto": "operador_prueba: la sesión anterior ya no autoriza solicitudes (401)",
+    "ok": true
+   },
+   {
+    "texto": "operador_prueba: la sesión ya no existe en la base de datos",
+    "ok": true
+   },
+   {
+    "texto": "se inicia sesión en el navegador",
+    "ok": true
+   },
+   {
+    "texto": "se muestra el login",
+    "ok": true
+   },
+   {
+    "texto": "la ruta protegida vuelve a pedir autenticación",
+    "ok": true
+   },
+   {
+    "texto": "reutilizar la sesión anterior por API responde 401",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "US-06.txt",
+   "US-06-despues-de-cerrar.png"
+  ]
+ },
+ "US-07": {
+  "titulo": "Crear una cuenta de operador (SD03)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "la interfaz confirma la cuenta creada",
+    "ok": true
+   },
+   {
+    "texto": "se creó una sola cuenta, con su perfil (nombre) y rol OPERADOR en la misma fila",
+    "ok": true
+   },
+   {
+    "texto": "la cuenta nueva puede iniciar sesión",
+    "ok": true
+   },
+   {
+    "texto": "recibe los permisos de operador (consulta de disponibilidad: 200)",
+    "ok": true
+   },
+   {
+    "texto": "no recibe permisos de administrador (crear usuarios: 403)",
+    "ok": true
+   },
+   {
+    "texto": "no recibe permisos de administrador (catálogo de celdas: 403)",
+    "ok": true
+   },
+   {
+    "texto": "API de creación: 201 (segunda cuenta de operador, creada por API)",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "US-07.txt",
+   "US-07-formulario.png",
+   "US-07-cuenta-creada.png"
+  ]
+ },
+ "US-08": {
+  "titulo": "Crear una cuenta de administrador (SD03)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API de creación: 201 con rol ADMINISTRADOR",
+    "ok": true
+   },
+   {
+    "texto": "la cuenta nueva entra y ve Celdas y Usuarios",
+    "ok": true
+   },
+   {
+    "texto": "puede acceder a Crear usuarios",
+    "ok": true
+   },
+   {
+    "texto": "API: puede consultar usuarios (200)",
+    "ok": true
+   },
+   {
+    "texto": "API: puede gestionar celdas (200)",
+    "ok": true
+   },
+   {
+    "texto": "no recibe permisos del operador (registrar entrada: 403)",
+    "ok": true
+   },
+   {
+    "texto": "no recibe permisos del operador (disponibilidad: 403)",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "US-08.txt",
+   "US-08-administrador-nuevo.png"
+  ]
+ },
+ "US-09": {
+  "titulo": "Usuario de acceso duplicado (SD03)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API: 409 con el mismo usuario de acceso",
+    "ok": true
+   },
+   {
+    "texto": "API: 409 también si cambia mayúsculas o espacios",
+    "ok": true
+   },
+   {
+    "texto": "sigue existiendo una sola cuenta, con sus datos originales",
+    "ok": true
+   },
+   {
+    "texto": "no quedó ninguna cuenta ni perfil adicional",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz rechaza la duplicación y explica el motivo bajo el campo Usuario",
+    "ok": true
+   },
+   {
+    "texto": "tampoco se creó nada desde la interfaz",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "US-09.txt",
+   "US-09-usuario-duplicado.png"
+  ]
+ },
+ "US-10": {
+  "titulo": "Campos obligatorios al crear usuario (SD03)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API sin \"nombre\": 422 e indica ese campo",
+    "ok": true
+   },
+   {
+    "texto": "API sin \"nombreUsuario\": 422 e indica ese campo",
+    "ok": true
+   },
+   {
+    "texto": "API sin \"contrasena\": 422 e indica ese campo",
+    "ok": true
+   },
+   {
+    "texto": "API sin \"rol\": 422 e indica ese campo",
+    "ok": true
+   },
+   {
+    "texto": "API con nombre de solo espacios: 422",
+    "ok": true
+   },
+   {
+    "texto": "no se creó la cuenta ni un perfil incompleto",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz exige los cuatro campos antes de enviar",
+    "ok": true
+   },
+   {
+    "texto": "el servidor rechaza el nombre de solo espacios y la interfaz lo muestra bajo el campo",
+    "ok": true
+   },
+   {
+    "texto": "sigue sin crearse ninguna cuenta",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "US-10.txt",
+   "US-10-nombre-solo-espacios.png"
+  ]
+ },
+ "US-11": {
+  "titulo": "Rol inválido enviado por API (SD03)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "rol \"SUPERUSUARIO\": 422",
+    "ok": true
+   },
+   {
+    "texto": "rol \"administrador\": 422",
+    "ok": true
+   },
+   {
+    "texto": "rol \"\": 422",
+    "ok": true
+   },
+   {
+    "texto": "rol 7: 422",
+    "ok": true
+   },
+   {
+    "texto": "no se creó ninguna cuenta",
+    "ok": true
+   },
+   {
+    "texto": "en la base solo existen los roles ADMINISTRADOR y OPERADOR",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "US-11.txt"
+  ]
+ },
+ "US-12": {
+  "titulo": "Protección de la contraseña (SD01 y SD03)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "la respuesta de creación no expone contraseña ni hash (campos: id, nombreUsuario, nombre, rol, creadoEn)",
+    "ok": true
+   },
+   {
+    "texto": "la consulta de usuarios tampoco expone contraseña ni hash",
+    "ok": true
+   },
+   {
+    "texto": "en persistencia se guarda un hash scrypt con sal, no la contraseña",
+    "ok": true
+   },
+   {
+    "texto": "el valor guardado no es ni contiene la contraseña en texto plano",
+    "ok": true
+   },
+   {
+    "texto": "cada cuenta tiene su propia sal",
+    "ok": true
+   },
+   {
+    "texto": "el login funciona con la cuenta",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "US-12.txt"
+  ]
+ },
+ "PE-01": {
+  "titulo": "Solicitudes sin autenticación (SD02)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "crear usuario sin sesión: 401",
+    "ok": true
+   },
+   {
+    "texto": "crear celda sin sesión: 401",
+    "ok": true
+   },
+   {
+    "texto": "no se crearon usuarios ni celdas",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "PE-01.txt"
+  ]
+ },
+ "PE-02": {
+  "titulo": "Operador intenta crear usuarios (SD02 y SD03)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "la interfaz impide el acceso administrativo",
+    "ok": true
+   },
+   {
+    "texto": "API de creación con sesión de operador: 403",
+    "ok": true
+   },
+   {
+    "texto": "API de consulta de usuarios con sesión de operador: 403",
+    "ok": true
+   },
+   {
+    "texto": "no se creó cuenta ni perfil",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "PE-02.txt",
+   "PE-02-operador-en-usuarios.png"
+  ]
+ },
+ "PE-03": {
+  "titulo": "Operador intenta administrar celdas (SD02 y SD04 a SD07)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "GET del catálogo: 403",
+    "ok": true
+   },
+   {
+    "texto": "GET de una celda: 403",
+    "ok": true
+   },
+   {
+    "texto": "POST (crear): 403",
+    "ok": true
+   },
+   {
+    "texto": "edición: 403",
+    "ok": true
+   },
+   {
+    "texto": "DELETE: 403",
+    "ok": true
+   },
+   {
+    "texto": "el catálogo y la celda no cambiaron",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz no ofrece la administración de celdas al operador",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "PE-03.txt",
+   "PE-03-operador-en-celdas.png"
+  ]
+ },
+ "PE-04": {
+  "titulo": "Administrador intenta registrar accesos (SD02)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "registrar entrada con sesión de administrador: 403",
+    "ok": true
+   },
+   {
+    "texto": "registrar salida con sesión de administrador: 403",
+    "ok": true
+   },
+   {
+    "texto": "no se crearon ni cerraron estancias",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz tampoco le ofrece registrar entradas",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "PE-04.txt",
+   "PE-04-administrador-en-entrada.png"
+  ]
+ },
+ "PE-05": {
+  "titulo": "Operador consulta disponibilidad (SD08)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "puede consultar: la celda libre T-LIBRE-01 aparece disponible",
+    "ok": true
+   },
+   {
+    "texto": "la celda ocupada T-OCUP-01 no aparece disponible",
+    "ok": true
+   },
+   {
+    "texto": "en la interfaz puede seleccionar la celda libre y no la ocupada",
+    "ok": true
+   },
+   {
+    "texto": "la celda ocupada se muestra como ocupada",
+    "ok": true
+   },
+   {
+    "texto": "no recibe botones ni permisos de administración",
+    "ok": true
+   },
+   {
+    "texto": "la consulta no reserva la celda: no se creó ninguna estancia",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "PE-05.txt",
+   "PE-05-disponibilidad-operador.png"
+  ]
+ },
+ "CE-01": {
+  "titulo": "Listar y buscar celdas (SD04)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "el catálogo incluye T-LIBRE-01 y T-HIST-01",
+    "ok": true
+   },
+   {
+    "texto": "T-LIBRE-01: tipo CARRO, libre y sin movimientos",
+    "ok": true
+   },
+   {
+    "texto": "T-HIST-01: libre y con 1 movimiento en el historial",
+    "ok": true
+   },
+   {
+    "texto": "sin paginación: la lista trae todas las celdas (34), igual que la base",
+    "ok": true
+   },
+   {
+    "texto": "la búsqueda identifica solo la celda buscada",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz muestra el catálogo con su resumen",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz muestra los datos correctos de la celda buscada",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-01.txt",
+   "CE-01-catalogo.png",
+   "CE-01-busqueda.png"
+  ]
+ },
+ "CE-02": {
+  "titulo": "Catálogo sin registros (SD04)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API: 200 con una lista vacía",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz informa que no hay registros, sin error del servidor",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-02.txt",
+   "CE-02-catalogo-vacio.png"
+  ]
+ },
+ "CE-03": {
+  "titulo": "Consultar celda inexistente (SD04)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API: 404",
+    "ok": true
+   },
+   {
+    "texto": "mensaje comprensible y no se devuelve otra celda: \"La celda no existe. Puede que otra persona la haya eliminado.\"",
+    "ok": true
+   },
+   {
+    "texto": "un identificador que no es un número también responde 404",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-03.txt"
+  ]
+ },
+ "CE-04": {
+  "titulo": "Crear celda y comprobar persistencia (SD05)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API confirma la creación con 201",
+    "ok": true
+   },
+   {
+    "texto": "los datos persisten al recargar; la celda aparece libre y sin movimientos",
+    "ok": true
+   },
+   {
+    "texto": "otra sesión la consulta de nuevo y la encuentra",
+    "ok": true
+   },
+   {
+    "texto": "existe una sola celda con ese código",
+    "ok": true
+   },
+   {
+    "texto": "no se creó ninguna estancia ni se marcó ocupada manualmente",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-04.txt",
+   "CE-04-celda-persistida.png"
+  ]
+ },
+ "CE-05": {
+  "titulo": "Código duplicado normalizado (SD05)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "mismo código: 409",
+    "ok": true
+   },
+   {
+    "texto": "con espacios exteriores y minúsculas: 409 después de normalizar",
+    "ok": true
+   },
+   {
+    "texto": "el registro original conserva sus datos y no se creó otro",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz normaliza el código y rechaza la duplicación",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-05.txt",
+   "CE-05-codigo-duplicado.png"
+  ]
+ },
+ "CE-06": {
+  "titulo": "Código y tipo obligatorios (SD05 y SD06)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "crear sin código: 422",
+    "ok": true
+   },
+   {
+    "texto": "crear sin tipo: 422",
+    "ok": true
+   },
+   {
+    "texto": "crear con código de solo espacios: 422",
+    "ok": true
+   },
+   {
+    "texto": "crear con tipo de solo espacios: 422",
+    "ok": true
+   },
+   {
+    "texto": "editar con código vacío: 422",
+    "ok": true
+   },
+   {
+    "texto": "editar con tipo de solo espacios: 422",
+    "ok": true
+   },
+   {
+    "texto": "editar sin enviar ningún dato: 422",
+    "ok": true
+   },
+   {
+    "texto": "no se guardó ninguna celda incompleta ni cambió la existente",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz exige código y tipo antes de enviar",
+    "ok": true
+   },
+   {
+    "texto": "el campo descarta los espacios: sigue vacío y obligatorio",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-06.txt",
+   "CE-06-campos-obligatorios.png"
+  ]
+ },
+ "CE-07": {
+  "titulo": "Editar celda existente (SD06)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "la interfaz confirma los cambios",
+    "ok": true
+   },
+   {
+    "texto": "los cambios persisten al recargar",
+    "ok": true
+   },
+   {
+    "texto": "se conserva el identificador",
+    "ok": true
+   },
+   {
+    "texto": "API de edición: 200 (se cambia el código de la celda con historial)",
+    "ok": true
+   },
+   {
+    "texto": "se conservan las relaciones existentes (su movimiento sigue asociado)",
+    "ok": true
+   },
+   {
+    "texto": "editar el catálogo no abrió ni cerró estancias ni liberó ocupaciones",
+    "ok": true
+   },
+   {
+    "texto": "las celdas de prueba vuelven a sus datos originales",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-07.txt",
+   "CE-07-formulario-edicion.png",
+   "CE-07-celda-editada.png"
+  ]
+ },
+ "CE-08": {
+  "titulo": "Editar con código de otra celda (SD06)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API: 409",
+    "ok": true
+   },
+   {
+    "texto": "se revierte el cambio: ambas celdas conservan sus datos anteriores",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-08.txt"
+  ]
+ },
+ "CE-09": {
+  "titulo": "Editar celda inexistente (SD06)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API: 404 (\"La celda no existe. Puede que otra persona la haya eliminado.\")",
+    "ok": true
+   },
+   {
+    "texto": "no se creó una celda nueva ni se modificó otro registro",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-09.txt"
+  ]
+ },
+ "CE-10": {
+  "titulo": "Eliminar celda sin referencias (SD07)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "la interfaz pide confirmación y el foco empieza en Cancelar",
+    "ok": true
+   },
+   {
+    "texto": "eliminación confirmada en la interfaz",
+    "ok": true
+   },
+   {
+    "texto": "ya no aparece en el catálogo",
+    "ok": true
+   },
+   {
+    "texto": "la consulta por identificador responde 404",
+    "ok": true
+   },
+   {
+    "texto": "por API la eliminación de una celda sin uso se confirma con 204 y después responde 404",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-10.txt",
+   "CE-10-confirmacion.png",
+   "CE-10-celda-eliminada.png"
+  ]
+ },
+ "CE-11": {
+  "titulo": "Eliminar celda libre con historial (SD07)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API: 409 (\"La celda T-HIST-01 tiene 1 movimiento en el historial y no se puede eliminar.\")",
+    "ok": true
+   },
+   {
+    "texto": "se conservan la celda (libre) y su historial",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz explica que estar libre no permite eliminar una celda con historial",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-11.txt",
+   "CE-11-celda-con-historial.png"
+  ]
+ },
+ "CE-12": {
+  "titulo": "Eliminar celda ocupada (SD07)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "API: 409 (\"La celda T-OCUP-01 está ocupada por el vehículo TST002 y no se puede eliminar.\")",
+    "ok": true
+   },
+   {
+    "texto": "se conserva la celda, que sigue ocupada",
+    "ok": true
+   },
+   {
+    "texto": "la estancia abierta conserva sus datos originales",
+    "ok": true
+   },
+   {
+    "texto": "la interfaz explica que la celda está ocupada",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-12.txt",
+   "CE-12-celda-ocupada.png"
+  ]
+ },
+ "CE-13": {
+  "titulo": "Crear el mismo código simultáneamente (SD05)",
+  "estado": "Aprobado",
+  "comprobaciones": [
+   {
+    "texto": "solo una creación se confirma y la otra recibe conflicto: 201 y 409",
+    "ok": true
+   },
+   {
+    "texto": "persiste exactamente una celda con ese código",
+    "ok": true
+   }
+  ],
+  "evidencias": [
+   "CE-13.txt"
+  ]
+ }
+}

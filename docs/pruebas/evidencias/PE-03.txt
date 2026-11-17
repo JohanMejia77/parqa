@@ -1,0 +1,36 @@
+PE-03 · Operador intenta administrar celdas (SD02 y SD04 a SD07)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:53 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> GET /api/celdas   (sesión de operador_prueba)
+<< 403
+   {"error":"Esta operación es solo para el rol administrador."}
+   [OK]    GET del catálogo: 403
+>> GET /api/celdas/31   (sesión de operador_prueba)
+<< 403
+   {"error":"Esta operación es solo para el rol administrador."}
+   [OK]    GET de una celda: 403
+>> POST /api/celdas   (sesión de operador_prueba)
+   cuerpo: {"codigo":"T-PE03-1","tipo":"CARRO"}
+<< 403
+   {"error":"Esta operación es solo para el rol administrador."}
+   [OK]    POST (crear): 403
+>> PATCH /api/celdas/31   (sesión de operador_prueba)
+   cuerpo: {"codigo":"T-PE03-2"}
+<< 403
+   {"error":"Esta operación es solo para el rol administrador."}
+   [OK]    edición: 403
+>> DELETE /api/celdas/31   (sesión de operador_prueba)
+<< 403
+   {"error":"Esta operación es solo para el rol administrador."}
+   [OK]    DELETE: 403
+BD> La celda de prueba después de los intentos
+    SELECT id, codigo, tipo FROM celda WHERE id = $1   [31]
+    => [{"id":31,"codigo":"T-LIBRE-01","tipo":"CARRO"}]
+   [OK]    el catálogo y la celda no cambiaron
+UI> página /celdas con sesión de operador: "Celdas Catálogo de los espacios del parqueadero. Tu cuenta no tiene permiso para esta página Iniciaste sesión como operador: registras entradas y salidas. Los usuarios y las celdas los gestiona un administrador. Ir al Panel"
+   [OK]    la interfaz no ofrece la administración de celdas al operador
+UI> captura: PE-03-operador-en-celdas.png
+
+Resultado: APROBADO (7 de 7 comprobaciones)

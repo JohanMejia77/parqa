@@ -1,16 +1,14 @@
 "use server";
 
-import { refresh, revalidatePath } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ErrorNegocio } from "@/modelos";
+import { idDe, textoDe } from "@/lib/parametros";
+import { obtenerUsuarioActual } from "@/servicios/autenticacion";
 import { registrarEntrada, registrarSalida } from "@/servicios/parqueadero";
+import { aEstado, type EstadoFormulario } from "./estado";
 
 // Controladores: reciben los datos del formulario, llaman al servicio y deciden la respuesta.
-
-export interface EstadoFormulario {
-  error?: string;
-  campo?: "placa" | "celda";
-}
+// El servicio comprueba que quien envía el formulario sea un operador con sesión abierta.
 
 export async function registrarEntradaAccion(
   _estado: EstadoFormulario,
@@ -19,8 +17,9 @@ export async function registrarEntradaAccion(
   let registroId: number;
   try {
     registroId = await registrarEntrada(
-      String(formData.get("placa") ?? ""),
-      Number(formData.get("celda")) || null
+      await obtenerUsuarioActual(),
+      textoDe(formData.get("placa")),
+      idDe(formData.get("celda"))
     );
   } catch (error) {
     return aEstado(error);
@@ -35,23 +34,10 @@ export async function registrarSalidaAccion(
 ): Promise<EstadoFormulario> {
   let registroId: number;
   try {
-    registroId = await registrarSalida(String(formData.get("placa") ?? ""));
+    registroId = await registrarSalida(await obtenerUsuarioActual(), textoDe(formData.get("placa")));
   } catch (error) {
     return aEstado(error);
   }
   revalidatePath("/", "layout");
   redirect(`/salida?registro=${registroId}`);
-}
-
-function aEstado(error: unknown): EstadoFormulario {
-  if (error instanceof ErrorNegocio) {
-    // Los datos en pantalla pueden estar desactualizados (p. ej. otra persona ocupó la celda):
-    // se vuelve a cargar la página para mostrar el estado real.
-    refresh();
-    return { error: error.message, campo: error.campo };
-  }
-  console.error(error);
-  return {
-    error: "No se pudo guardar. Verifica que PostgreSQL esté encendido e inténtalo de nuevo.",
-  };
 }

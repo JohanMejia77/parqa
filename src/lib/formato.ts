@@ -23,6 +23,18 @@ const formatoFechaLarga = new Intl.DateTimeFormat("es-CO", {
   month: "long",
 });
 
+const formatoFecha = new Intl.DateTimeFormat("es-CO", {
+  timeZone: ZONA,
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+});
+
+/** "22 oct 2026" */
+export function formatearFecha(fecha: Date): string {
+  return formatoFecha.format(fecha);
+}
+
 /** "3:20 p. m." */
 export function formatearHora(fecha: Date): string {
   return formatoHora.format(fecha);

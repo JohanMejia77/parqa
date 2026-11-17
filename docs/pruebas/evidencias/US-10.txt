@@ -1,0 +1,41 @@
+US-10 · Campos obligatorios al crear usuario (SD03)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:47 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+Contrato implementado: nombre (3 a 80 caracteres), nombreUsuario (3 a 30: letras, números, punto, guion, guion bajo),
+contrasena (8 a 72 caracteres) y rol (ADMINISTRADOR u OPERADOR). Los cuatro son obligatorios.
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombreUsuario":"campos_prueba","contrasena":"<oculta>","rol":"OPERADOR"}
+<< 422
+   {"error":"Escribe el nombre completo de la persona (de 3 a 80 caracteres).","campo":"nombre"}
+   [OK]    API sin "nombre": 422 e indica ese campo
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"Persona Prueba","contrasena":"<oculta>","rol":"OPERADOR"}
+<< 422
+   {"error":"El usuario debe tener de 3 a 30 caracteres: letras, números, punto, guion o guion bajo, sin espacios.","campo":"nombreUsuario"}
+   [OK]    API sin "nombreUsuario": 422 e indica ese campo
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"Persona Prueba","nombreUsuario":"campos_prueba","rol":"OPERADOR"}
+<< 422
+   {"error":"La contraseña debe tener entre 8 y 72 caracteres.","campo":"contrasena"}
+   [OK]    API sin "contrasena": 422 e indica ese campo
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"Persona Prueba","nombreUsuario":"campos_prueba","contrasena":"<oculta>"}
+<< 422
+   {"error":"Elige el rol de la cuenta: operador o administrador.","campo":"rol"}
+   [OK]    API sin "rol": 422 e indica ese campo
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"     ","nombreUsuario":"campos_prueba","contrasena":"<oculta>","rol":"OPERADOR"}
+<< 422
+   {"error":"Escribe el nombre completo de la persona (de 3 a 80 caracteres).","campo":"nombre"}
+   [OK]    API con nombre de solo espacios: 422
+   [OK]    no se creó la cuenta ni un perfil incompleto
+UI> envío con el formulario vacío (validación del navegador): {"formularioValido":false,"faltan":["nombre","nombreUsuario","rol","contrasena"]}
+   [OK]    la interfaz exige los cuatro campos antes de enviar
+UI> error del servidor con nombre de solo espacios: "Escribe el nombre completo de la persona (de 3 a 80 caracteres)."
+   [OK]    el servidor rechaza el nombre de solo espacios y la interfaz lo muestra bajo el campo
+UI> captura: US-10-nombre-solo-espacios.png
+   [OK]    sigue sin crearse ninguna cuenta
+
+Resultado: APROBADO (9 de 9 comprobaciones)

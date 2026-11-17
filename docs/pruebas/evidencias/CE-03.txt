@@ -1,0 +1,17 @@
+CE-03 · Consultar celda inexistente (SD04)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:07:11 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> GET /api/celdas/999999   (sesión de admin_prueba)
+<< 404
+   {"error":"La celda no existe. Puede que otra persona la haya eliminado."}
+   [OK]    API: 404
+   [OK]    mensaje comprensible y no se devuelve otra celda: "La celda no existe. Puede que otra persona la haya eliminado."
+>> GET /api/celdas/abc   (sesión de admin_prueba)
+<< 404
+   {"error":"La celda no existe. Puede que otra persona la haya eliminado."}
+   [OK]    un identificador que no es un número también responde 404
+Nota: la interfaz no tiene una página de detalle de celda; el mismo mensaje se muestra en los diálogos de edición y eliminación (ver CE-09).
+
+Resultado: APROBADO (3 de 3 comprobaciones)

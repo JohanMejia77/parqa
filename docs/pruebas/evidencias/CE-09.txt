@@ -1,0 +1,13 @@
+CE-09 · Editar celda inexistente (SD06)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:07:37 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> PATCH /api/celdas/999999   (sesión de admin_prueba)
+   cuerpo: {"codigo":"T-CE09-1","tipo":"CARRO"}
+<< 404
+   {"error":"La celda no existe. Puede que otra persona la haya eliminado."}
+   [OK]    API: 404 ("La celda no existe. Puede que otra persona la haya eliminado.")
+   [OK]    no se creó una celda nueva ni se modificó otro registro
+
+Resultado: APROBADO (2 de 2 comprobaciones)

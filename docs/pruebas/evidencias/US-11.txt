@@ -1,0 +1,32 @@
+US-11 · Rol inválido enviado por API (SD03)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:47 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"Rol Inválido","nombreUsuario":"rol_prueba","contrasena":"<oculta>","rol":"SUPERUSUARIO"}
+<< 422
+   {"error":"Elige el rol de la cuenta: operador o administrador.","campo":"rol"}
+   [OK]    rol "SUPERUSUARIO": 422
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"Rol Inválido","nombreUsuario":"rol_prueba","contrasena":"<oculta>","rol":"administrador"}
+<< 422
+   {"error":"Elige el rol de la cuenta: operador o administrador.","campo":"rol"}
+   [OK]    rol "administrador": 422
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"Rol Inválido","nombreUsuario":"rol_prueba","contrasena":"<oculta>","rol":""}
+<< 422
+   {"error":"Elige el rol de la cuenta: operador o administrador.","campo":"rol"}
+   [OK]    rol "": 422
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"Rol Inválido","nombreUsuario":"rol_prueba","contrasena":"<oculta>","rol":7}
+<< 422
+   {"error":"Elige el rol de la cuenta: operador o administrador.","campo":"rol"}
+   [OK]    rol 7: 422
+   [OK]    no se creó ninguna cuenta
+BD> Roles guardados
+    SELECT rol, count(*)::int AS cuentas FROM usuario GROUP BY rol ORDER BY rol
+    => [{"rol":"ADMINISTRADOR","cuentas":2},{"rol":"OPERADOR","cuentas":3}]
+   [OK]    en la base solo existen los roles ADMINISTRADOR y OPERADOR
+
+Resultado: APROBADO (6 de 6 comprobaciones)

@@ -1,0 +1,26 @@
+@startsalt mockup-login
+title Mockup HU-06 · Iniciar sesión
+{+
+  {/ <b>Autos Colombia</b> }
+  .
+  {
+    . | . | {+
+      <size:16><b>Iniciar sesión</b></size>
+      Entra con la cuenta que te dio el administrador.
+      .
+      Usuario
+      "laura.gomez              "
+      Contraseña
+      { "************             " | [ <&eye> ] }
+      .
+      <color:red><&warning> Usuario o contraseña incorrectos.</color>
+      .
+      [ <&account-login> Iniciar sesión      ]
+      .
+      ¿Olvidaste tu contraseña o no tienes cuenta?
+      Habla con el administrador del parqueadero.
+    } | . | .
+  }
+  .
+}
+@endsalt

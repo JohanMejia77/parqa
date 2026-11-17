@@ -1,0 +1,46 @@
+@startuml sd04-consultar-celdas
+!theme plain
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBackgroundColor #FFF6CC
+  ParticipantBorderColor #1C2130
+  LifeLineBorderColor #1C2130
+}
+title SD04 · Consultar y buscar celdas (HU-11)
+
+actor "Administrador" as U
+boundary "Página /celdas\n(GestionCeldas)" as P
+control "AutenticacionServicio" as AU
+control "CeldaServicio" as S
+participant "CeldaRepositorio" as R
+database "PostgreSQL" as BD
+
+U -> P : abre Celdas, o escribe un código,\nelige un tipo y pulsa "Buscar"
+P -> AU : exigirUsuario()
+ref over P, AU : SD02 Verificar la sesión y el rol
+AU --> P : actor (administrador)
+
+P -> S : consultarCeldas(actor, { buscar, tipo })
+S -> AU : autorizar(actor, ADMINISTRADOR)
+S -> S : limpia el texto de búsqueda\n(mayúsculas; solo letras, números y guiones)
+S -> R : listarCatalogoCeldas(buscar, tipo)
+R -> BD : SELECT celda + placa del ocupante\n+ número de movimientos\nWHERE codigo LIKE '%buscar%' AND tipo
+BD --> R : celdas
+R --> S
+S --> P : celdas
+
+alt hay celdas
+  P --> U : tabla: código, tipo, estado (libre u ocupada)\ny movimientos, con Editar y Eliminar
+else el catálogo está vacío
+  P --> U : "Aún no hay celdas" + botón "Nueva celda"
+else ninguna coincide con la búsqueda
+  P --> U : "Ninguna celda coincide" + "Quitar filtros"
+end
+
+note over P, S
+  API: GET /api/celdas?buscar=&tipo= responde 200 con la lista
+  (vacía si no hay celdas) y GET /api/celdas/{id} responde 200
+  con la celda o 404 si no existe.
+end note
+@enduml

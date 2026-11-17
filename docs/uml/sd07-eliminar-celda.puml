@@ -1,0 +1,69 @@
+@startuml sd07-eliminar-celda
+!theme plain
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBackgroundColor #FFF6CC
+  ParticipantBorderColor #1C2130
+  LifeLineBorderColor #1C2130
+}
+title SD07 · Eliminar celda (HU-14)
+
+actor "Administrador" as U
+boundary "Página /celdas\n(diálogo de confirmación)" as P
+control "eliminarCeldaAccion\n(Server Action)" as A
+control "CeldaServicio" as S
+control "AutenticacionServicio" as AU
+participant "CeldaRepositorio" as R
+database "PostgreSQL" as BD
+
+U -> P : pulsa "Eliminar" en una fila
+
+alt la celda está ocupada o tiene movimientos
+  P --> U : "La celda ... no se puede eliminar" y el motivo
+else la celda nunca se ha usado
+  P --> U : "¿Eliminar la celda ...? Esta acción no se puede deshacer."
+  U -> P : confirma "Eliminar celda"
+  P -> A : enviar formulario (id)
+  A -> AU : obtenerUsuarioActual()
+  AU --> A : actor
+  A -> S : eliminarCelda(actor, id)
+  S -> AU : autorizar(actor, ADMINISTRADOR)
+  ref over S, AU : SD02 Verificar la sesión y el rol
+
+  S -> BD : BEGIN
+  S -> R : bloquearCelda(id, FOR UPDATE)
+  S -> R : buscarCeldaCatalogo(id)
+  R -> BD : SELECT celda + ocupante + movimientos
+  BD --> R
+  R --> S : celda con su uso
+
+  alt la celda no existe
+    S -> BD : ROLLBACK
+    S --> A : ErrorNegocio (no encontrado)
+  else está ocupada o tiene movimientos\n(otra persona la usó mientras tanto)
+    S -> BD : ROLLBACK
+    S --> A : ErrorNegocio (conflicto)
+    A --> P : motivo dentro del diálogo
+  else sin uso
+    S -> R : eliminarCeldaPorId(id)
+    R -> BD : DELETE FROM celda WHERE id = $1
+    S -> BD : COMMIT
+    S --> A : celda eliminada
+    A --> P : éxito + catálogo actualizado
+    P --> U : cierra el diálogo y avisa "Celda eliminada"
+  end
+end
+
+note over R, BD
+  Última defensa: la llave foránea de registro
+  (ON DELETE RESTRICT) impide borrar una celda
+  que tenga movimientos.
+end note
+
+note over A, S
+  API: DELETE /api/celdas/{id} responde 204,
+  404 si no existe y 409 si está ocupada
+  o tiene historial.
+end note
+@enduml

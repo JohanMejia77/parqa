@@ -1,0 +1,24 @@
+@startsalt mockup-eliminar-celda
+title Mockup HU-14 · Eliminar celda (diálogos)
+{
+  {+
+    <size:16><b>¿Eliminar la celda A-21?</b></size>
+    Sale del catálogo y deja de ofrecerse a los vehículos.
+    Esta acción no se puede deshacer.
+    --
+    { . | . | [ <b>Cancelar</b> ] | [ <&trash> Eliminar celda ] }
+    .
+    Celda sin uso: pide confirmación.
+    El foco empieza en Cancelar.
+  } | . | {+
+    <size:16><b>La celda A-01 no se puede eliminar</b></size>
+    Está ocupada por el vehículo KJT482. Las celdas que ya
+    se usaron se conservan para no perder sus registros.
+    --
+    { . | . | . | [ Entendido ] }
+    .
+    Celda ocupada o con historial:
+    el diálogo explica por qué no se elimina.
+  }
+}
+@endsalt

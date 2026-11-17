@@ -1,0 +1,35 @@
+US-08 · Crear una cuenta de administrador (SD03)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:35 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> POST /api/usuarios   (sesión de admin_prueba)
+   cuerpo: {"nombre":"Admin Nuevo","nombreUsuario":"admin_nuevo","contrasena":"<oculta>","rol":"ADMINISTRADOR"}
+<< 201
+   {"id":5,"nombreUsuario":"admin_nuevo","nombre":"Admin Nuevo","rol":"ADMINISTRADOR","creadoEn":"2026-11-12T03:06:28.170Z"}
+   [OK]    API de creación: 201 con rol ADMINISTRADOR
+UI> /login: se escribe el usuario "admin_nuevo" y su contraseña (oculta) y se envía el formulario
+UI> menú de la cuenta nueva: ["Celdas","Usuarios"]
+   [OK]    la cuenta nueva entra y ve Celdas y Usuarios
+UI> página Usuarios: "Usuarios Cuentas con acceso al sistema y el rol de cada una. Crear usuario Cuentas 5 cuentas: 2 administradores y 3 operadores. Cuentas de usuario Nombre Usuario Rol Creada Admin Nuevo Tu cuenta admin_nuevo Administrador 11 de nov de 2026 Administrador princip"
+   [OK]    puede acceder a Crear usuarios
+UI> captura: US-08-administrador-nuevo.png
+>> GET /api/usuarios   (sesión de admin_nuevo)
+<< 200
+   [{"id":5,"nombreUsuario":"admin_nuevo","nombre":"Admin Nuevo","rol":"ADMINISTRADOR","creadoEn":"2026-11-12T03:06:28.170Z"},{"id":1,"nombreUsuario":"admin_prueba","nombre":"Administrador principal","rol":"ADMINISTRADOR","creadoEn":"2026-11-12T03:05:40.050Z"},{"id":3,"nombreUsuario":"operador_nuevo","nombre":"Operador Nuevo","rol":"OPERADOR","creadoEn":"2026-11-12T03:06:24.289Z"},{"id":2,"nombreUsuario":"operador_prueba","nombre":"Operador de Prueba","rol":"OPERADOR","creadoEn":"2026-11-12T03:05:44.033Z"},{"id":4,"nombreUsuario":"operador_api","nombre":"Operador por API","rol":"OPERADOR","creadoEn":"2026-11-12T03:06:27.978Z"}]
+   [OK]    API: puede consultar usuarios (200)
+>> GET /api/celdas   (sesión de admin_nuevo)
+<< 200
+   [{"id":1,"codigo":"A-01","tipo":"CARRO","placaOcupante":"KJT482","movimientos":1},{"id":2,"codigo":"A-02","tipo":"CARRO","placaOcupante":null,"movimientos":1},{"id":3,"codigo":"A-03","tipo":"CARRO","placaOcupante":null,"movimientos":0},{"id":4,"codigo":"A-04","tipo":"CARRO","placaOcupante":"HQX915","movimientos":1},{"id":5,"codigo":"A-05","tipo":"CARRO","placaOcupante":null,"movimientos":1},{"id":6,"codigo":"A-06","tipo":"CARRO","placaOcupante":null,"movimientos":0},{"id":7,"codigo":"A-07","tipo":"CARRO","placaOcupante":"FNC208","movimientos":1},{"id":8,"codigo":"A-08","tipo":"CARRO","placaOcupante":null,"movimientos":0},{"id":9,"codigo":"A-09","tipo":"CARRO","placaOcupante":null,"movimiento …
+   [OK]    API: puede gestionar celdas (200)
+>> POST /api/entradas   (sesión de admin_nuevo)
+   cuerpo: {"placa":"TST901","celdaId":31}
+<< 403
+   {"error":"Esta operación es solo para el rol operador."}
+   [OK]    no recibe permisos del operador (registrar entrada: 403)
+>> GET /api/celdas/disponibles   (sesión de admin_nuevo)
+<< 403
+   {"error":"Esta operación es solo para el rol operador."}
+   [OK]    no recibe permisos del operador (disponibilidad: 403)
+
+Resultado: APROBADO (7 de 7 comprobaciones)

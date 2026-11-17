@@ -1,0 +1,74 @@
+@startuml modelo-fisico-iteracion-2
+!theme plain
+skinparam defaultFontName Arial
+skinparam linetype ortho
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1C2130
+  HeaderBackgroundColor #FFF6CC
+}
+hide circle
+hide methods
+title Modelo físico después de la iteración 2 — PostgreSQL (db/schema.sql)
+
+entity "usuario" as usuario <<nueva>> {
+  id : SERIAL <<PK>>
+  --
+  nombre_usuario : VARCHAR(30) NOT NULL <<UNIQUE>>
+  nombre : VARCHAR(80) NOT NULL <<CHECK: no vacío>>
+  rol : VARCHAR(13) NOT NULL <<CHECK: ADMINISTRADOR | OPERADOR>>
+  contrasena_hash : VARCHAR(255) NOT NULL
+  creado_en : TIMESTAMPTZ NOT NULL DEFAULT now()
+}
+
+entity "sesion" as sesion <<nueva>> {
+  token_hash : CHAR(64) <<PK>>
+  --
+  usuario_id : INTEGER NOT NULL <<FK>>
+  creada_en : TIMESTAMPTZ NOT NULL DEFAULT now()
+  expira_en : TIMESTAMPTZ NOT NULL
+}
+
+entity "celda" as celda <<modificada>> {
+  id : SERIAL <<PK>>
+  --
+  codigo : VARCHAR(10) NOT NULL <<UNIQUE>>
+  tipo : VARCHAR(5) NOT NULL <<CHECK: CARRO | MOTO>>
+  ..
+  CHECK (codigo ~ '^[A-Z0-9]+(-[A-Z0-9]+)*$')
+}
+
+entity "vehiculo" as vehiculo {
+  id : SERIAL <<PK>>
+  --
+  placa : VARCHAR(6) NOT NULL <<UNIQUE>>
+  tipo : VARCHAR(5) NOT NULL <<CHECK: CARRO | MOTO>>
+  creado_en : TIMESTAMPTZ NOT NULL DEFAULT now()
+}
+
+entity "registro" as registro {
+  id : SERIAL <<PK>>
+  --
+  vehiculo_id : INTEGER NOT NULL <<FK>>
+  celda_id : INTEGER NOT NULL <<FK>>
+  fecha_entrada : TIMESTAMPTZ NOT NULL DEFAULT now()
+  fecha_salida : TIMESTAMPTZ NULL
+  ..
+  CHECK (fecha_salida >= fecha_entrada)
+  UNIQUE (vehiculo_id) WHERE fecha_salida IS NULL
+  UNIQUE (celda_id) WHERE fecha_salida IS NULL
+  INDEX (fecha_entrada DESC)
+  INDEX (celda_id)
+}
+
+usuario ||--o{ sesion : "fk_sesion_usuario\nON DELETE CASCADE"
+vehiculo ||--o{ registro : "fk_registro_vehiculo\nON DELETE RESTRICT"
+celda ||--o{ registro : "fk_registro_celda\nON DELETE RESTRICT"
+
+legend right
+  PK = llave primaria · FK = llave foránea
+  token_hash = SHA-256 del token que guarda la cookie
+  contrasena_hash = scrypt con sal aleatoria
+  celda.codigo pasó de VARCHAR(5) a VARCHAR(10)
+endlegend
+@enduml

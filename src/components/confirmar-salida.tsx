@@ -2,7 +2,8 @@
 
 import { useActionState } from "react";
 import { ArrowLeftFromLineIcon, TriangleAlertIcon } from "lucide-react";
-import { registrarSalidaAccion, type EstadoFormulario } from "@/acciones/registros";
+import type { EstadoFormulario } from "@/acciones/estado";
+import { registrarSalidaAccion } from "@/acciones/registros";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";

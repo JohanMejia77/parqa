@@ -1,0 +1,20 @@
+PE-02 · Operador intenta crear usuarios (SD02 y SD03)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:06:50 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+UI> página /usuarios con sesión de operador: "Usuarios Cuentas con acceso al sistema y el rol de cada una. Tu cuenta no tiene permiso para esta página Iniciaste sesión como operador: registras entradas y salidas. Los usuarios y las celdas los gestiona un administrador. Ir al Panel"
+   [OK]    la interfaz impide el acceso administrativo
+UI> captura: PE-02-operador-en-usuarios.png
+>> POST /api/usuarios   (sesión de operador_prueba)
+   cuerpo: {"nombre":"No Permitido","nombreUsuario":"pe02_prueba","contrasena":"<oculta>","rol":"OPERADOR"}
+<< 403
+   {"error":"Esta operación es solo para el rol administrador."}
+   [OK]    API de creación con sesión de operador: 403
+>> GET /api/usuarios   (sesión de operador_prueba)
+<< 403
+   {"error":"Esta operación es solo para el rol administrador."}
+   [OK]    API de consulta de usuarios con sesión de operador: 403
+   [OK]    no se creó cuenta ni perfil
+
+Resultado: APROBADO (4 de 4 comprobaciones)

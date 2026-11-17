@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import Form from "next/form";
 import Link from "next/link";
-import { io } from "next/cache";
 import { CircleCheckIcon, SearchIcon, SearchXIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -12,10 +11,12 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ConfirmarSalida } from "@/components/confirmar-salida";
 import { Placa } from "@/components/placa";
+import { SinPermiso } from "@/components/sin-permiso";
 import { TablaVehiculosDentro } from "@/components/tabla-vehiculos-dentro";
 import { TituloPagina } from "@/components/titulo-pagina";
 import { NOMBRE_TIPO, normalizarPlaca, permanencia, type RegistroDetalle } from "@/modelos";
 import { buscarRegistroDentro, buscarRegistroPorId, listarVehiculosDentro } from "@/repositorios/registros";
+import { exigirUsuario } from "@/servicios/autenticacion";
 import { formatearDuracion, formatearHora } from "@/lib/formato";
 import { idParametro, textoParametro } from "@/lib/parametros";
 
@@ -36,7 +37,9 @@ export default function PaginaSalida({ searchParams }: PageProps<"/salida">) {
 }
 
 async function ContenidoSalida({ searchParams }: Pick<PageProps<"/salida">, "searchParams">) {
-  await io();
+  const usuario = await exigirUsuario();
+  if (usuario.rol !== "OPERADOR") return <SinPermiso usuario={usuario} />;
+
   const parametros = await searchParams;
   const placa = normalizarPlaca(textoParametro(parametros.placa));
   const registroId = idParametro(parametros.registro);

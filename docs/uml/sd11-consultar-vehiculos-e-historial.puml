@@ -1,0 +1,42 @@
+@startuml sd11-consultar-vehiculos-e-historial
+!theme plain
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #1C2130
+  LifeLineBorderColor #1C2130
+}
+title SD11 · Consultar vehículos dentro e historial (HU-03 y HU-05, iteración 1)
+
+actor "Operador" as U
+boundary "Panel (/)" as PP
+boundary "Página /historial" as PH
+control "AutenticacionServicio" as AU
+participant "RegistroRepositorio" as R
+database "PostgreSQL" as BD
+
+== Vehículos dentro (HU-03) ==
+U -> PP : abre el Panel
+PP -> AU : exigirUsuario()
+ref over PP, AU : SD02 Verificar la sesión y el rol
+PP -> R : listarVehiculosDentro()
+R -> BD : SELECT registros sin fecha_salida\nORDER BY fecha_entrada
+BD --> R
+R --> PP : registros con placa, tipo y celda
+PP --> U : tabla con hora de entrada y tiempo transcurrido,\ny acceso a registrar la salida
+
+== Historial (HU-05) ==
+U -> PH : abre Historial o filtra por placa
+PH -> AU : exigirUsuario()
+ref over PH, AU : SD02 Verificar la sesión y el rol
+PH -> R : listarHistorial(placa, 100)
+R -> BD : SELECT registros WHERE placa LIKE '%placa%'\nORDER BY fecha_entrada DESC LIMIT 100
+BD --> R
+R --> PH
+alt hay movimientos
+  PH --> U : entradas y salidas con permanencia\ny estado (dentro o finalizado)
+else no hay coincidencias
+  PH --> U : "Sin movimientos"
+end
+@enduml

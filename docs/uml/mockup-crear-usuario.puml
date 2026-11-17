@@ -1,0 +1,32 @@
+@startsalt mockup-crear-usuario
+title Mockup HU-09 · Crear usuario (diálogo)
+{+
+  <size:16><b>Crear usuario</b></size>
+  La persona podrá iniciar sesión en cuanto guardes la cuenta.
+  .
+  Nombre completo
+  "Laura Gómez                                  "
+  Usuario
+  "laura.gomez              "
+  Con él inicia sesión. De 3 a 30 caracteres: letras, números, punto, guion o guion bajo.
+  .
+  Rol
+  {
+    {+
+      (X) <b>Operador</b>
+      Registra entradas y salidas
+      y consulta el parqueadero.
+    } | {+
+      () <b>Administrador</b>
+      Crea usuarios y gestiona
+      las celdas.
+    }
+  }
+  .
+  Contraseña
+  { "************                              " | [ <&eye> ] }
+  Mínimo 8 caracteres. Entrégasela a la persona en privado: no se vuelve a mostrar.
+  --
+  { . | . | . | [ Cancelar ] | [ <&plus> Crear usuario ] }
+}
+@endsalt

@@ -1,0 +1,18 @@
+CE-11 · Eliminar celda libre con historial (SD07)
+Plan PP-02 · Autos Colombia 0.2.0 (compilación de producción) · http://localhost:3100 · base autos_colombia_pruebas
+Ejecutado: 11/11/2026, 10:07:49 p. m. (hora de Colombia)
+Las contraseñas y los tokens de sesión se ocultan a propósito.
+
+>> DELETE /api/celdas/32   (sesión de admin_prueba)
+<< 409
+   {"error":"La celda T-HIST-01 tiene 1 movimiento en el historial y no se puede eliminar."}
+   [OK]    API: 409 ("La celda T-HIST-01 tiene 1 movimiento en el historial y no se puede eliminar.")
+>> GET /api/celdas/32   (sesión de admin_prueba)
+<< 200
+   {"id":32,"codigo":"T-HIST-01","tipo":"CARRO","placaOcupante":null,"movimientos":1}
+   [OK]    se conservan la celda (libre) y su historial
+UI> diálogo: {"titulo":"La celda T-HIST-01 no se puede eliminar","motivo":"Tiene 1 movimiento en el historial. Las celdas que ya se usaron se conservan para no perder sus registros.","botones":["Entendido"]}
+   [OK]    la interfaz explica que estar libre no permite eliminar una celda con historial
+UI> captura: CE-11-celda-con-historial.png
+
+Resultado: APROBADO (3 de 3 comprobaciones)

@@ -1,0 +1,52 @@
+@startuml sd10-registrar-salida
+!theme plain
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #1C2130
+  LifeLineBorderColor #1C2130
+}
+title SD10 · Registrar salida de vehículo (HU-02, iteración 1)
+
+actor "Operador" as U
+boundary "Página /salida" as P
+control "registrarSalidaAccion\n(Server Action)" as A
+control "ParqueaderoServicio" as S
+control "AutenticacionServicio" as AU
+participant "RegistroRepositorio" as R
+database "PostgreSQL" as BD
+
+U -> P : busca la placa o la elige en la lista
+P -> AU : exigirUsuario()
+ref over P, AU : SD02 Verificar la sesión y el rol
+P -> R : buscarRegistroDentro(placa)
+R -> BD : SELECT registro abierto de la placa
+BD --> R
+R --> P : registro, o nada
+
+alt la placa no está dentro
+  P --> U : "... no está dentro del parqueadero"
+else el vehículo está dentro
+  P --> U : tipo, celda, hora de entrada y tiempo dentro
+  U -> P : pulsa "Confirmar salida"
+  P -> A : enviar formulario (placa)
+  A -> AU : obtenerUsuarioActual()
+  AU --> A : actor
+  A -> S : registrarSalida(actor, placa)
+  S -> AU : autorizar(actor, OPERADOR)
+  S -> R : cerrarRegistroDentro(placa)
+  R -> BD : UPDATE registro SET fecha_salida = now()\nWHERE placa y fecha_salida IS NULL
+  alt ya no había registro abierto
+    BD --> R : 0 filas
+    S --> A : ErrorNegocio (no encontrado)
+    A --> P : "... no está dentro del parqueadero"
+  else salida registrada
+    BD --> R : id del registro
+    R --> S
+    S --> A : id del registro
+    A --> P : redirige a /salida?registro=id
+    P --> U : "Salida registrada": celda liberada\ny tiempo de permanencia
+  end
+end
+@enduml

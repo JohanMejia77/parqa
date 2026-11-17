@@ -1,0 +1,43 @@
+@startuml sd12-cerrar-sesion
+!theme plain
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBackgroundColor #FFF6CC
+  ParticipantBorderColor #1C2130
+  LifeLineBorderColor #1C2130
+}
+title SD12 · Cerrar sesión (HU-07)
+
+actor "Usuario\n(administrador u operador)" as U
+boundary "Encabezado\n(botón Cerrar sesión)" as P
+control "cerrarSesionAccion\n(Server Action)" as A
+control "AutenticacionServicio" as S
+participant "SesionRepositorio" as R
+database "PostgreSQL" as BD
+
+U -> P : pulsa "Cerrar sesión"
+P -> A : enviar formulario
+A -> S : cerrarSesion()
+S -> S : lee el token de la cookie ac_sesion
+S -> R : eliminarSesion(SHA-256(token))
+R -> BD : DELETE FROM sesion WHERE token_hash = $1
+BD --> R
+R --> S
+S -> S : borra la cookie
+S --> A
+A --> P : redirige a /login
+P --> U : formulario de inicio de sesión
+
+== Después de cerrar ==
+U -> P : vuelve a abrir una página protegida\no reutiliza la cookie anterior por la API
+ref over P, S : SD02 · la sesión ya no existe en la base
+P --> U : página: /login · API: 401
+
+note over S, BD
+  La sesión se borra en el servidor: el token deja de
+  servir aunque alguien lo haya copiado. No basta con
+  ocultar la pantalla o borrar datos del navegador.
+  API: DELETE /api/sesion responde 204.
+end note
+@enduml
